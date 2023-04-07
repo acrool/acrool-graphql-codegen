@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "src/react-query/dist",
     "target": "es6",
     "module": "commonjs",
     "strict": true,
@@ -11,5 +11,5 @@
     "declaration": true,
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "example"]
+  "exclude": ["node_modules", "src/**/dist", "example"]
 }

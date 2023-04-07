@@ -1,39 +1,20 @@
 {
-  "name": "bear-graphql-react-query",
-  "version": "3.0.1-alpha.4",
+  "name": "bear-graphql-code-generator",
   "description": "Dropdown list with React Component",
   "keywords": [
     "typescript",
-    "graphql-react-query"
+    "graphql-code-generator",
+    "react-query"
   ],
   "private": false,
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/imagine10255/bear-graphql-react-query.git"
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "type": "./dist/index.d.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
   "engines": {
     "node": ">=14"
   },
   "scripts": {
-    "dev": "vite build -w",
     "build:claer": "rm -rf ./dist",
     "prepublishOnly": "run-s build",
     "build": "run-s build:claer && tsc --project ./tsconfig.build.json",
-    "build2": "run-s build:claer && tsc && vite build",
-    "preview": "vite preview",
     "lint:fix": "eslint ./src --fix",
     "cz": "git-cz",
     "test": "jest",
@@ -42,7 +23,8 @@
     "release:major": "standard-version -r major",
     "release:minor": "standard-version -r minor",
     "release:patch": "standard-version -r patch",
-    "release:alpha": "standard-version --prerelease alpha"
+    "release:alpha": "standard-version --prerelease alpha",
+    "postrelease": "# then run `git push --follow-tags origin main && yarn build && npm publish ./src/react-query --access=public` to publish"
   },
   "peerDependencies": {
     "graphql": "^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0"
@@ -68,10 +50,7 @@
     "standard-version": "^9.5.0",
     "ts-jest": "^29.1.0",
     "tslib": "~2.4.0",
-    "typescript": "^4.9.3",
-    "vite": "^4.2.0",
-    "vite-plugin-dts": "^2.1.0",
-    "vite-plugin-eslint": "^1.8.1"
+    "typescript": "^4.9.3"
   },
   "config": {
     "commitizen": {
