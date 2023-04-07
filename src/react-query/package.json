@@ -1,6 +1,6 @@
 {
   "name": "@bear-graphql-codegen/react-query",
-  "version": "0.0.1",
+  "version": "1.0.1-alpha.0",
   "description": "react-query for graphql-code-generator",
   "keywords": [
     "typescript",
