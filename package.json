@@ -1,6 +1,6 @@
 {
   "name": "bear-graphql-react-query",
-  "version": "3.0.1-alpha.3",
+  "version": "3.0.1-alpha.4",
   "description": "Dropdown list with React Component",
   "keywords": [
     "typescript",
@@ -49,9 +49,7 @@
   },
   "dependencies": {
     "@graphql-tools/apollo-engine-loader": "^7.3.26",
-    "graphql": "^15.0.0",
-    "graphql-codegen-core": "0.18.2",
-    "graphql-codegen-plugin-helpers": "0.18.2"
+    "graphql": "^16.6.0"
   },
   "devDependencies": {
     "@graphql-codegen/plugin-helpers": "^3.0.0",

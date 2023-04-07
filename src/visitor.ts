@@ -1,26 +1,13 @@
 import autoBind from 'auto-bind';
-import {camelCase, pascalCase} from 'change-case-all';
-import {GraphQLSchema, Kind, OperationDefinitionNode} from 'graphql';
+import {pascalCase} from 'change-case-all';
+import {GraphQLSchema, OperationDefinitionNode} from 'graphql';
 import {Types} from '@graphql-codegen/plugin-helpers';
-import {
-    ClientSideBasePluginConfig,
-    ClientSideBaseVisitor,
-    DocumentMode,
-    getConfigValue,
-    LoadedFragment,
-    OMIT_TYPE,
-} from '@graphql-codegen/visitor-plugin-common';
+import {ClientSideBasePluginConfig, ClientSideBaseVisitor, DocumentMode, getConfigValue, LoadedFragment} from '@graphql-codegen/visitor-plugin-common';
 import {ReactQueryRawPluginConfig} from './config';
 import {FetcherRenderer} from './fetcher';
-// import {FetchFetcher} from './fetcher-fetch';
 import {HardcodedFetchFetcher} from './fetcher-fetch-hardcoded';
-// import {GraphQLRequestClientFetcher} from './fetcher-graphql-request';
 import {CustomMapperFetcher} from './fetcher-custom-mapper';
-import {
-    generateInfiniteQueryKeyMaker,
-    generateMutationKeyMaker,
-    generateQueryKeyMaker
-} from './variables-generator';
+import {generateInfiniteQueryKeyMaker, generateMutationKeyMaker, generateQueryKeyMaker} from './variables-generator';
 
 
 
@@ -103,20 +90,10 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
     }
 
     private createFetcher(raw: ReactQueryRawPluginConfig['fetcher']): FetcherRenderer {
-        // if (raw === 'fetch') {
-        //     console.log('fetch');
-        //     return new FetchFetcher(this);
-        // }
+        // @TODO: imagine10255 remove other method
         if (typeof raw === 'object' && 'endpoint' in raw) {
-            console.log('HardcodedFetchFetcher');
             return new HardcodedFetchFetcher(this, raw);
         }
-        // if (raw === 'graphql-request') {
-        //     console.log('graphql-request');
-        //     return new GraphQLRequestClientFetcher(this);
-        // }
-        console.log('default');
-
         return new CustomMapperFetcher(this, raw);
     }
 
