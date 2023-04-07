@@ -1,6 +1,11 @@
-# bear-graphql-code-generator
+# @bear-graphql-codegen/react-query
 
 > graphql code generator plugins
+
+## Plugins
+
+[@bear-graphql-codegen/react-query](https://github.com/imagine10255/bear-graphql-codegen/tree/main/src/react-query)
+
 
 ## License
 
