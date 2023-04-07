@@ -3,11 +3,16 @@ import {concatAST, FragmentDefinitionNode, GraphQLSchema, Kind} from 'graphql';
 import {oldVisit, PluginFunction, PluginValidateFn, Types} from '@graphql-codegen/plugin-helpers';
 import {LoadedFragment} from '@graphql-codegen/visitor-plugin-common';
 import {ReactQueryRawPluginConfig} from './config';
+// import { ReactQueryVisitor } from './visitor';
+import {BaseDocumentsVisitor} from '@graphql-codegen/visitor-plugin-common';
 
 
 import {
     ReactQueryVisitor
 } from './visitor';
+
+const {getCachedDocumentNodeFromSchema} = require('@graphql-codegen/plugin-helpers');
+const {visit} = require('graphql');
 
 
 export const plugin: PluginFunction<ReactQueryRawPluginConfig, Types.ComplexPluginOutput> = (
@@ -40,7 +45,6 @@ export const plugin: PluginFunction<ReactQueryRawPluginConfig, Types.ComplexPlug
             prepend: [...visitor.getImports(), visitor.getFetcherImplementation()],
             content: [
                 visitor.fragments,
-                // @ts-ignore
                 ...visitorResult.definitions.filter(t => typeof t === 'string'),
             ].join('\n'),
         };
@@ -50,7 +54,6 @@ export const plugin: PluginFunction<ReactQueryRawPluginConfig, Types.ComplexPlug
         prepend: [...visitor.getImports()],
         content: [
             visitor.fragments,
-            // @ts-ignore
             ...visitorResult.definitions.filter(t => typeof t === 'string'),
         ].join('\n'),
     };
