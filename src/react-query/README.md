@@ -6,7 +6,7 @@ Adjustments based on the original @graphql-codegen/typescript-react-query
 ## Install
 
 ```bash
-yarn add @bear-graphql-codegen/react-query -D
+$ yarn add @bear-graphql-codegen/react-query -D
 ```
 
 
