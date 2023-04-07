@@ -1,14 +1,11 @@
 # @bear-graphql-codegen/react-query
 
-> graphql code generator plugins
-
 [Improved graphql-codegen Hook](https://medium.com/@imaginechiu/improved-graphql-codegen-hook-4606cee4c29c)
 Adjustments based on the original @graphql-codegen/typescript-react-query
 
 ## Install
 
 ```bash
-# react-query
 yarn add @bear-graphql-codegen/react-query -D
 ```
 
