@@ -2,7 +2,7 @@ import {extname} from 'path';
 import {concatAST, FragmentDefinitionNode, GraphQLSchema, Kind} from 'graphql';
 import {oldVisit, PluginFunction, PluginValidateFn, Types} from '@graphql-codegen/plugin-helpers';
 import {LoadedFragment} from '@graphql-codegen/visitor-plugin-common';
-import {ReactQueryRawPluginConfig} from '@graphql-codegen/typescript-react-query/typings/config';
+import {ReactQueryRawPluginConfig} from './config';
 
 
 import {
