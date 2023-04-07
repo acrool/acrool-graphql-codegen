@@ -1,4 +1,4 @@
-# @bear-graphql-codegen/react-query
+# bear-graphql-codegen
 
 > graphql code generator plugins
 
