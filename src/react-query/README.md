@@ -3,6 +3,9 @@
 [Improved graphql-codegen Hook](https://medium.com/@imaginechiu/improved-graphql-codegen-hook-4606cee4c29c)
 Adjustments based on the original @graphql-codegen/typescript-react-query
 
+- add getKey not variables and options variables
+- modify variables to object variables and fetchOptions 
+
 ## Install
 
 ```bash
@@ -10,7 +13,7 @@ $ yarn add @bear-graphql-codegen/react-query -D
 ```
 
 
-## Usage
+## Setting
 
 codegen.ts
 
@@ -42,6 +45,47 @@ const config: CodegenConfig = {
         }
     }
 }
+```
+
+
+## Usage
+
+```typescript
+const DropFileUpload = () => {
+    const qc = useQueryClient();
+    const UploadFile = useTaskFileUploadMutation();
+    const Tasks = useTasksQuery();
+
+    const handleOnUpload: TOnUpload = async (file: any, options) => {
+
+        try {
+            const res = await UploadFile.mutateAsync({
+                variables: {
+                    taskId,
+                    file,
+                },
+                fetchOptions: {
+                    onUploadProgress: options.onUpdateProgress,
+                },
+            });
+
+            qc.invalidateQueries(useTasksQuery.getKey());
+            qc.setQueryData<ITaskFilesQuery>(useTaskFilesQuery.getKey({taskId}), ((oldData) => {
+                return produce(oldData, draft => {
+                    draft.taskFiles = push(draft.taskFiles, res.taskFileUpload.newData);
+                });
+            }));
+            options.onUploadDone();
+
+        }catch (e){
+            if(e instanceof SystemException) {
+                options.onUploadFail(e.message);
+            }
+        }
+
+    };
+}
+
 ```
 
 
