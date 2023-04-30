@@ -1,5 +1,5 @@
-import {plugin} from '../src';
 import {parse, buildSchema} from 'graphql';
+import {plugin} from '../index';
 
 
 
@@ -63,7 +63,6 @@ describe('My Plugin', () => {
 
         type Mutation {
             workspaceCreate: WorkspaceCreateInput!
-            authLogin(input: WorkspaceCreateInput!): String!
         }
         type PaginateInput {
             name: String
@@ -87,6 +86,12 @@ describe('My Plugin', () => {
             // name: 'bear-react-query'
         });
 
-        expect(result).toBe('Hello Dotan!');
+        expect(result).toStrictEqual({
+            "content": "\nexport const TestDocument = `\n    query test {\n  feed {\n    id\n    commentCount\n    repository {\n      full_name\n      html_url\n      owner {\n        avatar_url\n      }\n    }\n  }\n}\n    `;\nexport const useTestQuery = <\n      TData = TestQuery,\n      TError = unknown\n    >(\n      args?: IUseFetcherArgs<TestQueryVariables>,\n      options?: UseQueryOptions<TestQuery, TError, TData>\n    ) =>\n    useQuery<TestQuery, TError, TData>(\n      args?.variables ? ['test', args.variables]: ['test'],\n      fetch<TestQuery, IUseFetcherArgs<TestQueryVariables>>(TestDocument, args),\n      options\n    );",
+            "prepend": [
+                "import { useQuery, UseQueryOptions } from '@tanstack/react-query';",
+                null
+            ]
+        });
     });
 });
