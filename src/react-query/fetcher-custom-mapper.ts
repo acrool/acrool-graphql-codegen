@@ -14,6 +14,7 @@ import {
 import {ReactQueryVisitor} from './visitor';
 
 
+
 export class CustomMapperFetcher implements FetcherRenderer {
     private _mapper: ParsedMapper;
     private _isReactHook: boolean;
@@ -28,6 +29,9 @@ export class CustomMapperFetcher implements FetcherRenderer {
 
     private getFetcherFnName(operationResultType: string, operationVariablesTypes: string): string {
         return `${this._mapper.type}<${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>>`;
+    }
+    private getSubscriptionFnName(operationResultType: string, operationVariablesTypes: string): string {
+        return `useSubscription<TData, ${operationVariablesTypes}>`;
     }
 
     generateFetcherImplementaion(): string {
@@ -157,6 +161,32 @@ export class CustomMapperFetcher implements FetcherRenderer {
       ${impl},
       options
     );`;
+    }
+
+    generateSubscriptionHook(
+        node: OperationDefinitionNode,
+        documentVariableName: string,
+        operationName: string,
+        operationResultType: string,
+        operationVariablesTypes: string,
+        hasRequiredVariables: boolean,
+    ): string {
+        const variables = `args${hasRequiredVariables ? '' : '?'}: SubscriptionHookOptions<TData, ${operationVariablesTypes}>`;
+        const hookConfig = this.visitor.queryMethodMap;
+        this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.query.hook);
+        this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.query.options);
+
+        const typedFetcher = this.getSubscriptionFnName(operationResultType, operationVariablesTypes);
+        const impl = `${typedFetcher}(gql(${documentVariableName}), args);`;
+
+        return `export const use${operationName} = <
+      TData = ${operationResultType},
+      TError = ${this.visitor.config.errorType}
+    >(
+      ${variables},
+    ) =>
+      ${impl}
+    `;
     }
 
     generateFetcherFetch(

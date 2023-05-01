@@ -58,6 +58,25 @@ export function generateQueryKeyMaker(
     )};\n`;
 }
 
+export function generateQuerySetData(
+    node: OperationDefinitionNode,
+    documentVariableName: string,
+    operationName: string,
+    operationResultType: string,
+    operationVariablesTypes: string,
+    hasRequiredVariables: boolean,
+) {
+
+    // @TODO: imagine
+    const signature = generateQueryVariablesSignature(hasRequiredVariables, operationVariablesTypes);
+    return `\nuse${operationName}.setData = <TData = ${operationResultType}>(qc: QueryClient, args: {
+        ${signature}, 
+        updater: Updater<TData|undefined, TData|undefined>
+    }) => {
+        qc.setQueryData(use${operationName}.getKey(args.variables), args.updater);
+    }`;
+}
+
 export function generateMutationKey(node: OperationDefinitionNode): string {
     return `['${node.name.value}']`;
 }
