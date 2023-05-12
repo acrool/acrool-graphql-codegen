@@ -1,9 +1,9 @@
 export type TFileMapVariables = Record<string, unknown>;
-interface IConvertRes {variables: TFileMapVariables, map: string[], values: File[]}
+interface IConvertRes {variables: TFileMapVariables, map: string[], values: Array<File|Blob>}
 
 
-const isFile = input => 'File' in window && input instanceof File;
-const isBlob = input => 'Blob' in window && input instanceof Blob;
+const isFile = (input: any): input is File => 'File' in window && input instanceof File;
+const isBlob = (input: any): input is Blob => 'Blob' in window && input instanceof Blob;
 
 
 
@@ -12,33 +12,29 @@ const isBlob = input => 'Blob' in window && input instanceof Blob;
  * @param originVariables
  * @param parentKey
  */
-export const getVariablesFileMap = <V extends TFileMapVariables>(originVariables: V, parentKey: string[] = ['variables']): IConvertRes => {
-    return Object.keys(originVariables).reduce((curr, key) => {
-        const row = originVariables[key];
-        if(isFile(row) || isBlob(row)){
-            const file = row;
-            return {
-                variables: {...curr.variables, [key]: null},
-                map: [...curr.map, parentKey.concat(key).join('.')],
-                values: [...curr.values, file],
-            };
+export const getVariablesFileMap = <V extends TFileMapVariables>(originVariables: V): IConvertRes => {
+    const result: IConvertRes = {variables: {}, map: [], values: []};
 
-        }else if(row && typeof row === 'object'){
-            // 如果是Object, 往下繼續帶上層Key
-            const children = getVariablesFileMap(row as TFileMapVariables, parentKey.concat(key));
-            return {
-                variables: {...curr.variables, [key]: children.variables},
-                map: [...curr.map, ...children.map],
-                values: [...curr.values, ...children.values],
-            };
-        }
+    const traverse = (obj: TFileMapVariables, path: string[]) => {
+        Object.entries(obj).forEach(([key, val]) => {
+            const newPath = [...path, key];
+            if(isFile(val) || isBlob(val)){
+                const file = val;
+                result.variables[key] = null;
+                result.map.push(newPath.join('.'));
+                result.values.push(file);
 
+            } else if(val && typeof val === 'object'){
+                // 如果是Object, 往下繼續帶上層Key
+                result.variables[key] = {};
+                traverse(val as TFileMapVariables, newPath);
+            } else {
+                result.variables[key] = val;
+            }
+        });
+    };
 
-        return {
-            ...curr,
-            variables: {...curr.variables, [key]: row},
-            values: curr.values,
-        };
+    traverse(originVariables, ['variables']);
 
-    }, {variables: {}, map: [], values: []});
+    return result;
 };
