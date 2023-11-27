@@ -124,11 +124,11 @@ export class CustomMapperFetcher implements FetcherRenderer {
       ${variables},
       ${options}
     ) =>
-    ${hookConfig.query.hook}<${operationResultType}, TError, TData>(
-      ${generateQueryKey(node, hasRequiredVariables)},
-      ${impl},
-      options
-    );`;
+    ${hookConfig.query.hook}<${operationResultType}, TError, TData>({
+      queryKey: ${generateQueryKey(node, hasRequiredVariables)},
+      queryFn: ${impl},
+      ...options
+    });`;
     }
 
     generateMutationHook(
@@ -157,9 +157,9 @@ export class CustomMapperFetcher implements FetcherRenderer {
     ${
     hookConfig.mutation.hook
 }<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>(
-      ${generateMutationKey(node)},
-      ${impl},
-      options
+      mutationKey: ${generateMutationKey(node)},
+      mutationFn: ${impl},
+      ...options
     );`;
     }
 
