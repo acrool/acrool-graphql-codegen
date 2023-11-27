@@ -156,11 +156,11 @@ export class CustomMapperFetcher implements FetcherRenderer {
     >(${options}) =>
     ${
     hookConfig.mutation.hook
-}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>(
+}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>({
       mutationKey: ${generateMutationKey(node)},
       mutationFn: ${impl},
       ...options
-    );`;
+    });`;
     }
 
     generateSubscriptionHook(
