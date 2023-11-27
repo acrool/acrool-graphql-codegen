@@ -70,7 +70,7 @@ export class CustomMapperFetcher implements FetcherRenderer {
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.infiniteQuery.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.infiniteQuery.options);
 
-        const options = `options?: ${hookConfig.infiniteQuery.options}<${operationResultType}, TError, TData>`;
+        const options = `options?: Partial<${hookConfig.infiniteQuery.options}<${operationResultType}, TError, TData>>`;
 
         const typedFetcher = this.getFetcherFnName(operationResultType, `IUseFetcherArgs<${operationVariablesTypes}>`);
         const implHookOuter = this._isReactHook
@@ -89,11 +89,11 @@ export class CustomMapperFetcher implements FetcherRenderer {
       ${options}
     ) =>{
     ${implHookOuter}
-    return ${hookConfig.infiniteQuery.hook}<${operationResultType}, TError, TData>(
-      ${generateInfiniteQueryKey(node, hasRequiredVariables)},
-      ${impl},
-      options
-    )};`;
+    return ${hookConfig.infiniteQuery.hook}<${operationResultType}, TError, TData>({
+      queryKey: ${generateInfiniteQueryKey(node, hasRequiredVariables)},
+      queryFn: ${impl},
+      ...options
+    })};`;
     }
 
     generateQueryHook(
@@ -110,7 +110,7 @@ export class CustomMapperFetcher implements FetcherRenderer {
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.query.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.query.options);
 
-        const options = `options?: ${hookConfig.query.options}<${operationResultType}, TError, TData>`;
+        const options = `options?: Partial<${hookConfig.query.options}<${operationResultType}, TError, TData>>`;
 
         const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
         const impl = this._isReactHook
@@ -144,7 +144,7 @@ export class CustomMapperFetcher implements FetcherRenderer {
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.mutation.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.mutation.options);
 
-        const options = `options?: ${hookConfig.mutation.options}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>`;
+        const options = `options?: Partial<${hookConfig.mutation.options}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>>`;
         const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
         const impl = this._isReactHook
             ? `${typedFetcher}(${documentVariableName})`
