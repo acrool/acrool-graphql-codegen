@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-alpha.2](https://github.com/imagine10255/bear-graphql-codegen/compare/v2.0.0-alpha.1...v2.0.0-alpha.2) (2023-11-27)
+
+
+### Bug Fixes
+
+* add Partial in options ([2768e2a](https://github.com/imagine10255/bear-graphql-codegen/commit/2768e2a6b137b6276eedd531f549f4ab7d831038))
+
 ## [2.0.0-alpha.1](https://github.com/imagine10255/bear-graphql-codegen/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (2023-11-27)
 
 
