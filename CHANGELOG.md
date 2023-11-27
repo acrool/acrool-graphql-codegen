@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-alpha.0](https://github.com/imagine10255/bear-graphql-codegen/compare/v1.0.4-alpha.0...v2.0.0-alpha.0) (2023-11-27)
+
+
+### Features
+
+* modify react-query v5 format ([b63e090](https://github.com/imagine10255/bear-graphql-codegen/commit/b63e0903f060cd7df3cbd4090c7634bcd02c73a4))
+
 ### [1.0.4-alpha.0](https://github.com/imagine10255/bear-graphql-codegen/compare/v1.0.3...v1.0.4-alpha.0) (2023-05-12)
 
 ### [1.0.3](https://github.com/imagine10255/bear-graphql-codegen/compare/v1.0.2...v1.0.3) (2023-05-01)
