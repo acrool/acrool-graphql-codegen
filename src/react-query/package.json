@@ -1,5 +1,5 @@
 {
-  "name": "@bear-graphql-codegen/react-query",
+  "name": "@acrool/graphql-codegen-react-query",
   "version": "2.0.0-alpha.2",
   "description": "react-query for graphql-code-generator",
   "keywords": [
@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/imagine10255/bear-graphql-codegen.git"
+    "url": "https://github.com/acrool/graphql-codegen-react-query.git"
   },
   "engines": {
     "node": ">=14"

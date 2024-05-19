@@ -1,4 +1,4 @@
-# @bear-graphql-codegen/react-query
+# @acrool/graphql-codegen-react-query
 
 [Improved graphql-codegen Hook](https://medium.com/@imaginechiu/improved-graphql-codegen-hook-4606cee4c29c)
 Adjustments based on the original @graphql-codegen/typescript-react-query
@@ -9,7 +9,7 @@ Adjustments based on the original @graphql-codegen/typescript-react-query
 ## Install
 
 ```bash
-$ yarn add @bear-graphql-codegen/react-query -D
+$ yarn add @acrool/graphql-codegen-react-query -D
 ```
 
 
@@ -33,7 +33,7 @@ const config: CodegenConfig = {
             plugins: [
                 'typescript',
                 'typescript-operations',
-                '@bear-graphql-codegen/react-query',
+                '@acrool/graphql-codegen-react-query',
             ],
         },
     },
@@ -92,4 +92,4 @@ const DropFileUpload = () => {
 
 ## License
 
-MIT © [imagine10255](https://github.com/imagine10255)
+MIT © [acrool](https://github.com/acrool)

@@ -4,9 +4,9 @@
 
 ## Plugins
 
-[@bear-graphql-codegen/react-query](https://github.com/imagine10255/bear-graphql-codegen/tree/main/src/react-query)
+[@acrool/graphql-codegen-react-query](https://github.com/acrool/acrool-graphql-codegen/tree/main/src/react-query)
 
 
 ## License
 
-MIT © [imagine10255](https://github.com/imagine10255)
+MIT © [acrool](https://github.com/acrool)

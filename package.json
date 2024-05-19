@@ -1,6 +1,6 @@
 {
-  "name": "bear-graphql-codegen",
-  "description": "graphql-code-generator plugins",
+  "name": "acrool-graphql-codegen",
+  "description": "acrool graphql-code-generator plugins",
   "keywords": [
     "typescript",
     "graphql-code-generator",
