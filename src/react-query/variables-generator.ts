@@ -90,7 +90,7 @@ export function generateQueryClickHook(
     const signature = generateQueryVariablesSignature(hasRequiredVariables, operationVariablesTypes);
     return `\nuse${operationName}.useClient = () => {
         const qc = useQueryClient();
-        const setData = <TData = ${operationResultType}>(qc: QueryClient, args: {
+        const setData = <TData = ${operationResultType}>(args: {
             ${signature}, 
             updater: Updater<TData|undefined, TData|undefined>
         }) => qc.setQueryData(use${operationName}.getKey(args.variables), args.updater);

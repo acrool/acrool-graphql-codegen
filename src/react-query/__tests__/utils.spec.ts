@@ -138,7 +138,7 @@ useTestQuery.setData = <TData = TestQuery>(qc: QueryClient, args: {
 
 useTestQuery.useClient = () => {
         const qc = useQueryClient();
-        const setData = <TData = TestQuery>(qc: QueryClient, args: {
+        const setData = <TData = TestQuery>(args: {
             variables?: TestQueryVariables, 
             updater: Updater<TData|undefined, TData|undefined>
         }) => qc.setQueryData(useTestQuery.getKey(args.variables), args.updater);
