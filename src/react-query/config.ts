@@ -75,6 +75,8 @@ export interface ReactQueryRawPluginConfig
 
     exposeQuerySetData?: boolean;
 
+    exposeQueryClientHook?: boolean;
+
     /**
      * @default false
      * @description For each generate query hook adds `fetcher` field with a corresponding GraphQL query using the fetcher.

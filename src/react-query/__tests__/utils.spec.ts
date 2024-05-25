@@ -90,13 +90,65 @@ describe('My Plugin', () => {
             exposeDocument: false,
             exposeQueryKeys: true,
             exposeQuerySetData: true,
+            exposeQueryClientHook: true,
         });
 
         const usedAfter = process.memoryUsage().heapUsed;
         console.log(`Memory used by the function: ${(usedAfter - usedBefore) / 1024 / 1024} MB`);
 
+        const testQueryDocument = `\`
+    query testQuery {
+  feed {
+    id
+    commentCount
+    repository {
+      full_name
+      html_url
+      owner {
+        avatar_url
+      }
+    }
+  }
+}
+    \`;
+export const useTestQuery = <
+      TData = TestQuery,
+      TError = unknown
+    >(
+      args?: IUseFetcherArgs<TestQueryVariables>,
+      options?: Partial<UseQueryOptions<TestQuery, TError, TData>>
+    ) =>
+    useQuery<TestQuery, TError, TData>({
+      queryKey: args?.variables ? ['testQuery', args.variables]: ['testQuery'],
+      queryFn: fetch<TestQuery, IUseFetcherArgs<TestQueryVariables>>(TestQueryDocument, args),
+      ...options
+    });
+
+useTestQuery.getKey = (variables?: TestQueryVariables) => variables ? ['testQuery', variables]: ['testQuery'];
+
+
+
+useTestQuery.setData = <TData = TestQuery>(qc: QueryClient, args: {
+        variables?: TestQueryVariables, 
+        updater: Updater<TData|undefined, TData|undefined>
+    }) => {
+        qc.setQueryData(useTestQuery.getKey(args.variables), args.updater);
+    }
+
+
+useTestQuery.useClient = () => {
+        const qc = useQueryClient();
+        const setData = <TData = TestQuery>(qc: QueryClient, args: {
+            variables?: TestQueryVariables, 
+            updater: Updater<TData|undefined, TData|undefined>
+        }) => qc.setQueryData(useTestQuery.getKey(args.variables), args.updater);
+        return {setData}
+    }`;
+
         expect(result).toStrictEqual({
-            "content": "\nexport const TestQueryDocument = `\n    query testQuery {\n  feed {\n    id\n    commentCount\n    repository {\n      full_name\n      html_url\n      owner {\n        avatar_url\n      }\n    }\n  }\n}\n    `;\nexport const useTestQuery = <\n      TData = TestQuery,\n      TError = unknown\n    >(\n      args?: IUseFetcherArgs<TestQueryVariables>,\n      options?: Partial<UseQueryOptions<TestQuery, TError, TData>>\n    ) =>\n    useQuery<TestQuery, TError, TData>({\n      queryKey: args?.variables ? ['testQuery', args.variables]: ['testQuery'],\n      queryFn: fetch<TestQuery, IUseFetcherArgs<TestQueryVariables>>(TestQueryDocument, args),\n      ...options\n    });\n\nuseTestQuery.getKey = (variables?: TestQueryVariables) => variables ? ['testQuery', variables]: ['testQuery'];\n\n\n\nuseTestQuery.setData = <TData = TestQuery>(qc: QueryClient, args: {\n        variables?: TestQueryVariables, \n        updater: Updater<TData|undefined, TData|undefined>\n    }) => {\n        qc.setQueryData(useTestQuery.getKey(args.variables), args.updater);\n    }\n",
+            "content": `
+export const TestQueryDocument = ${testQueryDocument}
+`,
             "prepend": [
                 "import { useQuery, QueryClient, Updater, UseQueryOptions } from '@tanstack/react-query';",
                 "import {gql, useSubscription, SubscriptionHookOptions} from '@apollo/client';",

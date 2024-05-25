@@ -77,6 +77,27 @@ export function generateQuerySetData(
     }`;
 }
 
+export function generateQueryClickHook(
+    node: OperationDefinitionNode,
+    documentVariableName: string,
+    operationName: string,
+    operationResultType: string,
+    operationVariablesTypes: string,
+    hasRequiredVariables: boolean,
+) {
+
+    // @TODO: imagine
+    const signature = generateQueryVariablesSignature(hasRequiredVariables, operationVariablesTypes);
+    return `\nuse${operationName}.useClient = () => {
+        const qc = useQueryClient();
+        const setData = <TData = ${operationResultType}>(qc: QueryClient, args: {
+            ${signature}, 
+            updater: Updater<TData|undefined, TData|undefined>
+        }) => qc.setQueryData(use${operationName}.getKey(args.variables), args.updater);
+        return {setData}
+    }`;
+}
+
 export function generateMutationKey(node: OperationDefinitionNode): string {
     return `['${node.name.value}']`;
 }

@@ -6,7 +6,13 @@ import {ClientSideBasePluginConfig, ClientSideBaseVisitor, DocumentMode, getConf
 import {ReactQueryRawPluginConfig} from './config';
 import {FetcherRenderer} from './fetcher';
 import {CustomMapperFetcher} from './fetcher-custom-mapper';
-import {generateInfiniteQueryKeyMaker, generateMutationKeyMaker, generateQueryKeyMaker, generateQuerySetData} from './variables-generator';
+import {
+    generateInfiniteQueryKeyMaker,
+    generateMutationKeyMaker,
+    generateQueryClickHook,
+    generateQueryKeyMaker,
+    generateQuerySetData
+} from './variables-generator';
 
 
 
@@ -17,6 +23,7 @@ export interface ReactQueryPluginConfig extends ClientSideBasePluginConfig {
     exposeSetQueryData: boolean;
     exposeMutationKeys: boolean;
     exposeQuerySetData: boolean;
+    exposeQueryClientHook: boolean;
     exposeFetcher: boolean;
     addInfiniteQuery: boolean;
     legacyMode: boolean;
@@ -81,6 +88,7 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
             exposeDocument: getConfigValue(rawConfig.exposeDocument, false),
             exposeQueryKeys: getConfigValue(rawConfig.exposeQueryKeys, false),
             exposeQuerySetData: getConfigValue(rawConfig.exposeQuerySetData, false),
+            exposeQueryClientHook: getConfigValue(rawConfig.exposeQueryClientHook, false),
             exposeMutationKeys: getConfigValue(rawConfig.exposeMutationKeys, false),
             exposeFetcher: getConfigValue(rawConfig.exposeFetcher, false),
             addInfiniteQuery: getConfigValue(rawConfig.addInfiniteQuery, false),
@@ -200,6 +208,17 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
 
                 if (this.config.exposeQuerySetData) {
                     query += `\n${generateQuerySetData(
+                        node,
+                        documentVariableName,
+                        operationName,
+                        operationResultType,
+                        operationVariablesTypes,
+                        hasRequiredVariables,
+                    )}\n`;
+                }
+                
+                if (this.config.exposeQueryClientHook) {
+                    query += `\n${generateQueryClickHook(
                         node,
                         documentVariableName,
                         operationName,
