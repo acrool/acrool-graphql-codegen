@@ -94,7 +94,9 @@ export function generateQueryClickHook(
             ${signature}, 
             updater: Updater<TData|undefined, TData|undefined>
         }) => qc.setQueryData(use${operationName}.getKey(args.variables), args.updater);
-        return {setData}
+        
+        const invalidate = () => qc.invalidateQueries({queryKey: use${operationName}.getKey()});
+        return {setData, invalidate}
     }`;
 }
 

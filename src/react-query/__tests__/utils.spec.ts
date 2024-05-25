@@ -142,7 +142,9 @@ useTestQuery.useClient = () => {
             variables?: TestQueryVariables, 
             updater: Updater<TData|undefined, TData|undefined>
         }) => qc.setQueryData(useTestQuery.getKey(args.variables), args.updater);
-        return {setData}
+        
+        const invalidate = () => qc.invalidateQueries({queryKey: useTestQuery.getKey()});
+        return {setData, invalidate}
     }`;
 
         expect(result).toStrictEqual({
