@@ -128,6 +128,7 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
 
         const hookAndTypeImports = [
             ...Array.from(this.reactQueryHookIdentifiersInUse),
+            'useQueryClient',
             'QueryClient',
             'Updater',
             ...Array.from(this.reactQueryOptionsIdentifiersInUse).map(

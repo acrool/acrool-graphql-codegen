@@ -150,7 +150,7 @@ useTestQuery.useClient = () => {
 export const TestQueryDocument = ${testQueryDocument}
 `,
             "prepend": [
-                "import { useQuery, QueryClient, Updater, UseQueryOptions } from '@tanstack/react-query';",
+                "import { useQuery, useQueryClient, QueryClient, Updater, UseQueryOptions } from '@tanstack/react-query';",
                 "import {gql, useSubscription, SubscriptionHookOptions} from '@apollo/client';",
                 null
             ]
