@@ -11,7 +11,6 @@ import {
     generateMutationKeyMaker,
     generateQueryClickHook,
     generateQueryKeyMaker,
-    generateQuerySetData
 } from './variables-generator';
 
 
@@ -22,7 +21,6 @@ export interface ReactQueryPluginConfig extends ClientSideBasePluginConfig {
     exposeQueryKeys: boolean;
     exposeSetQueryData: boolean;
     exposeMutationKeys: boolean;
-    exposeQuerySetData: boolean;
     exposeQueryClientHook: boolean;
     exposeFetcher: boolean;
     addInfiniteQuery: boolean;
@@ -87,7 +85,6 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
             errorType: getConfigValue(rawConfig.errorType, 'unknown'),
             exposeDocument: getConfigValue(rawConfig.exposeDocument, false),
             exposeQueryKeys: getConfigValue(rawConfig.exposeQueryKeys, false),
-            exposeQuerySetData: getConfigValue(rawConfig.exposeQuerySetData, false),
             exposeQueryClientHook: getConfigValue(rawConfig.exposeQueryClientHook, false),
             exposeMutationKeys: getConfigValue(rawConfig.exposeMutationKeys, false),
             exposeFetcher: getConfigValue(rawConfig.exposeFetcher, false),
@@ -200,19 +197,6 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
                     query += `\n${generateQueryKeyMaker(
                         node,
                         operationName,
-                        operationVariablesTypes,
-                        hasRequiredVariables,
-                    )}\n`;
-                }
-                
-                // console.log('documentVariableName', documentVariableName);
-
-                if (this.config.exposeQuerySetData) {
-                    query += `\n${generateQuerySetData(
-                        node,
-                        documentVariableName,
-                        operationName,
-                        operationResultType,
                         operationVariablesTypes,
                         hasRequiredVariables,
                     )}\n`;

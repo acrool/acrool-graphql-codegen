@@ -89,7 +89,6 @@ describe('My Plugin', () => {
             omitOperationSuffix: true,
             exposeDocument: false,
             exposeQueryKeys: true,
-            exposeQuerySetData: true,
             exposeQueryClientHook: true,
         });
 
@@ -126,14 +125,6 @@ export const useTestQuery = <
 
 useTestQuery.getKey = (variables?: TestQueryVariables) => variables ? ['testQuery', variables]: ['testQuery'];
 
-
-
-useTestQuery.setData = <TData = TestQuery>(qc: QueryClient, args: {
-        variables?: TestQueryVariables, 
-        updater: Updater<TData|undefined, TData|undefined>
-    }) => {
-        qc.setQueryData(useTestQuery.getKey(args.variables), args.updater);
-    }
 
 
 useTestQuery.useClient = () => {

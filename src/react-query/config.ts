@@ -73,8 +73,6 @@ export interface ReactQueryRawPluginConfig
      */
     exposeMutationKeys?: boolean;
 
-    exposeQuerySetData?: boolean;
-
     exposeQueryClientHook?: boolean;
 
     /**
