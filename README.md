@@ -1,4 +1,4 @@
-# bear-graphql-codegen
+# Acrool Graphql Codegen
 
 > graphql code generator plugins
 
