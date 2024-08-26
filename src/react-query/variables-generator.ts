@@ -94,7 +94,7 @@ export function generateQueryClickHook(
       ...options
     });
         
-        return {queryKey, getQueryKeyVariables, setData, invalidate, fetchQuery}
+        return {queryKey, getQueryKeyVariables, setData, invalidate, invalidateAll, fetchQuery}
     }`;
 }
 

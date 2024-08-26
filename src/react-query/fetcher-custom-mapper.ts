@@ -197,28 +197,15 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-        const variables = `args${hasRequiredVariables ? '' : '?'}: IUseFetcherArgs<${operationVariablesTypes}>`;
+        // We can't generate a fetcher field since we can't call react hooks outside of a React Fucntion Component
+        // Related: https://reactjs.org/docs/hooks-rules.html
+        if (this._isReactHook) return '';
 
-        const hookConfig = this.visitor.queryMethodMap;
-        this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.query.hook);
-        this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.query.options);
-
-        const options = `options?: Partial<${hookConfig.query.options}<${operationResultType}, TError, TData>>`;
+        const variables = `variables${hasRequiredVariables ? '' : '?'}: ${operationVariablesTypes}`;
 
         const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
-        const impl = this._isReactHook
-            ? `${typedFetcher}(${documentVariableName}).bind(null, args)`
-            : `${typedFetcher}(${documentVariableName}, args)`;
+        const impl = `${typedFetcher}(${documentVariableName}, variables, options)`;
 
-        return `<TData = ${operationResultType}, TError = ${this.visitor.config.errorType}>(
-      ${variables},
-      ${options}
-    ) =>
-    qc.queryFetch<${operationResultType}, TError>({
-      queryKey: ${generateQueryKey(node, hasRequiredVariables)},
-      queryFn: ${impl},
-      ...options
-    });`;
-
+        return `\nuse${operationName}.fetcher = (${variables}, options?: RequestInit['headers']) => ${impl};`;
     }
 }
