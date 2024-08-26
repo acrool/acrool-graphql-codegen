@@ -74,6 +74,7 @@ export function generateQueryClickHook(
         const qc = useQueryClient();
         const queryKey = use${operationName}.getKey();
         const getQueryKeyVariables = (${signature}) => use${operationName}.getKey(variables);
+        const fetchData = useFetchData<${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>>();
         
         const setData = <TData = ${operationResultType}>(args: {
             ${signature}, 
@@ -90,7 +91,7 @@ export function generateQueryClickHook(
     ) =>
     qc.fetchQuery<${operationResultType}, TError>({
       queryKey: getQueryKeyVariables(args.variables!),
-      queryFn: useFetchData<${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>>(${documentVariableName}).bind(null, args),
+      queryFn: fetchData.bind(null, ${documentVariableName}, args),
       ...options
     });
         
