@@ -65,10 +65,12 @@ export function generateQueryClickHook(
     operationResultType: string,
     operationVariablesTypes: string,
     hasRequiredVariables: boolean,
+    fetchQuery: string
 ) {
 
     // @TODO: imagine
     const signature = generateQueryVariablesSignature(hasRequiredVariables, operationVariablesTypes);
+
     return `\nuse${operationName}.useClient = () => {
         const qc = useQueryClient();
         const setData = <TData = ${operationResultType}>(args: {
@@ -76,8 +78,14 @@ export function generateQueryClickHook(
             updater: Updater<TData|undefined, TData|undefined>
         }) => qc.setQueryData(use${operationName}.getKey(args.variables), args.updater);
         
-        const invalidate = () => qc.invalidateQueries({queryKey: use${operationName}.getKey()});
-        return {setData, invalidate}
+        const queryKey = use${operationName}.getKey();
+        const queryKeyVariables = use${operationName}.getKey(args.variables);
+        
+        const invalidate = () => qc.invalidateQueries({queryKey: queryKeyVariables});
+        const invalidateAll = () => qc.invalidateQueries({queryKey});
+        const fetchQuery = ${fetchQuery};
+        
+        return {queryKey, setData, invalidate, fetchQuery}
     }`;
 }
 

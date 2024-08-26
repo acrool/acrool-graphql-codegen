@@ -197,15 +197,28 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-    // We can't generate a fetcher field since we can't call react hooks outside of a React Fucntion Component
-    // Related: https://reactjs.org/docs/hooks-rules.html
-        if (this._isReactHook) return '';
+        const variables = `args${hasRequiredVariables ? '' : '?'}: IUseFetcherArgs<${operationVariablesTypes}>`;
 
-        const variables = `variables${hasRequiredVariables ? '' : '?'}: ${operationVariablesTypes}`;
+        const hookConfig = this.visitor.queryMethodMap;
+        this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.query.hook);
+        this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.query.options);
+
+        const options = `options?: Partial<${hookConfig.query.options}<${operationResultType}, TError, TData>>`;
 
         const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
-        const impl = `${typedFetcher}(${documentVariableName}, variables, options)`;
+        const impl = this._isReactHook
+            ? `${typedFetcher}(${documentVariableName}).bind(null, args)`
+            : `${typedFetcher}(${documentVariableName}, args)`;
 
-        return `\nuse${operationName}.fetcher = (${variables}, options?: RequestInit['headers']) => ${impl};`;
+        return `<TData = ${operationResultType}, TError = ${this.visitor.config.errorType}>(
+      ${variables},
+      ${options}
+    ) =>
+    qc.queryFetch<${operationResultType}, TError, TData>({
+      queryKey: ${generateQueryKey(node, hasRequiredVariables)},
+      queryFn: ${impl},
+      ...options
+    });`;
+
     }
 }

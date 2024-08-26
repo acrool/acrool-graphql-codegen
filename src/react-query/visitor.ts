@@ -177,7 +177,7 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
 
         operationResultType = this._externalImportPrefix + operationResultType;
         operationVariablesTypes = this._externalImportPrefix + operationVariablesTypes;
-        
+
 
         let query: string = null;
         switch (operationType){
@@ -201,7 +201,7 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
                         hasRequiredVariables,
                     )}\n`;
                 }
-                
+
                 if (this.config.exposeQueryClientHook) {
                     query += `\n${generateQueryClickHook(
                         node,
@@ -210,6 +210,14 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
                         operationResultType,
                         operationVariablesTypes,
                         hasRequiredVariables,
+                        this.fetcher.generateFetcherFetch(
+                            node,
+                            documentVariableName,
+                            operationName,
+                            operationResultType,
+                            operationVariablesTypes,
+                            hasRequiredVariables,
+                        )
                     )}\n`;
                 }
                 if (this.config.addInfiniteQuery) {
