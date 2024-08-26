@@ -214,7 +214,7 @@ export class CustomMapperFetcher implements FetcherRenderer {
       ${variables},
       ${options}
     ) =>
-    qc.queryFetch<${operationResultType}, TError, TData>({
+    qc.queryFetch<${operationResultType}, TError>({
       queryKey: ${generateQueryKey(node, hasRequiredVariables)},
       queryFn: ${impl},
       ...options

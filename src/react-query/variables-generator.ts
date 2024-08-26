@@ -65,7 +65,6 @@ export function generateQueryClickHook(
     operationResultType: string,
     operationVariablesTypes: string,
     hasRequiredVariables: boolean,
-    fetchQuery: string
 ) {
 
     // @TODO: imagine
@@ -73,19 +72,29 @@ export function generateQueryClickHook(
 
     return `\nuse${operationName}.useClient = () => {
         const qc = useQueryClient();
+        const queryKey = use${operationName}.getKey();
+        const getQueryKeyVariables = (args: {${signature}) => use${operationName}.getKey(args.variables);
+        
         const setData = <TData = ${operationResultType}>(args: {
             ${signature}, 
             updater: Updater<TData|undefined, TData|undefined>
-        }) => qc.setQueryData(use${operationName}.getKey(args.variables), args.updater);
+        }) => qc.setQueryData(getQueryKeyVariables(args), args.updater);
         
-        const queryKey = use${operationName}.getKey();
-        const queryKeyVariables = use${operationName}.getKey(args.variables);
-        
-        const invalidate = () => qc.invalidateQueries({queryKey: queryKeyVariables});
+       
+        const invalidate = () => qc.invalidateQueries({queryKey: getQueryKeyVariables(args)});
         const invalidateAll = () => qc.invalidateQueries({queryKey});
-        const fetchQuery = ${fetchQuery};
         
-        return {queryKey, setData, invalidate, fetchQuery}
+         const fetchQuery = <TError = unknown>(
+      args: IUseFetcherArgs<${operationVariablesTypes}>,
+      options?: Partial<UseQueryOptions<${operationResultType}, TError>>
+    ) =>
+    qc.fetchQuery<${operationResultType}, TError>({
+      queryKey: getQueryKeyVariables(args),
+      queryFn: useFetchData<${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>(${documentVariableName}).bind(null, args),
+      ...options
+    });
+        
+        return {queryKey, queryKeyVariables, setData, invalidate, fetchQuery}
     }`;
 }
 

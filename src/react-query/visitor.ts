@@ -210,14 +210,6 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
                         operationResultType,
                         operationVariablesTypes,
                         hasRequiredVariables,
-                        this.fetcher.generateFetcherFetch(
-                            node,
-                            documentVariableName,
-                            operationName,
-                            operationResultType,
-                            operationVariablesTypes,
-                            hasRequiredVariables,
-                        )
                     )}\n`;
                 }
                 if (this.config.addInfiniteQuery) {
