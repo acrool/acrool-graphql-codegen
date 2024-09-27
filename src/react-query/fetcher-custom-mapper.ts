@@ -117,18 +117,23 @@ export class CustomMapperFetcher implements FetcherRenderer {
             ? `${typedFetcher}(${documentVariableName}).bind(null, args)`
             : `${typedFetcher}(${documentVariableName}, args)`;
 
-        return `export const use${operationName} = <
-      TData = ${operationResultType},
-      TError = ${this.visitor.config.errorType}
-    >(
-      ${variables},
-      ${options}
-    ) =>
-    ${hookConfig.query.hook}<${operationResultType}, TError, TData>({
-      queryKey: ${generateQueryKey(node, hasRequiredVariables)},
-      queryFn: ${impl},
-      ...options
-    });`;
+        return `export const {useQuery: use${operationName}, useQueryClient: use${operationName}Client} = createQueryAndQueryClientHook<
+    ${operationResultType},
+    ${variables}
+>(${documentVariableName}, ECacheKey.CUSTOMER_LIST);`;
+
+    //     return `export const use${operationName} = <
+    //   TData = ${operationResultType},
+    //   TError = ${this.visitor.config.errorType}
+    // >(
+    //   ${variables},
+    //   ${options}
+    // ) =>
+    // ${hookConfig.query.hook}<${operationResultType}, TError, TData>({
+    //   queryKey: ${generateQueryKey(node, hasRequiredVariables)},
+    //   queryFn: ${impl},
+    //   ...options
+    // });`;
     }
 
     generateMutationHook(
