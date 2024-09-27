@@ -119,8 +119,8 @@ export class CustomMapperFetcher implements FetcherRenderer {
 
         return `export const {useQuery: use${operationName}, useQueryClient: use${operationName}Client} = createQueryAndQueryClientHook<
     ${operationResultType},
-    ${variables}
->(${documentVariableName}, ECacheKey.CUSTOMER_LIST);`;
+    IUseFetcherArgs<${operationVariablesTypes}>
+>(${documentVariableName}, EQueryKey.${operationName});`;
 
     //     return `export const use${operationName} = <
     //   TData = ${operationResultType},
