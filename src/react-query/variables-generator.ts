@@ -69,15 +69,33 @@ export function generateQueryClickHook(
 
     // @TODO: imagine
     const signature = generateQueryVariablesSignature(hasRequiredVariables, operationVariablesTypes);
+
     return `\nuse${operationName}.useClient = () => {
         const qc = useQueryClient();
+        const queryKey = use${operationName}.getKey();
+        const getQueryKeyVariables = (${signature}) => use${operationName}.getKey(variables);
+        const fetchData = useFetchData<${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>>(${documentVariableName});
+        
         const setData = <TData = ${operationResultType}>(args: {
             ${signature}, 
             updater: Updater<TData|undefined, TData|undefined>
-        }) => qc.setQueryData(use${operationName}.getKey(args.variables), args.updater);
+        }) => qc.setQueryData(getQueryKeyVariables(args.variables), args.updater);
         
-        const invalidate = () => qc.invalidateQueries({queryKey: use${operationName}.getKey()});
-        return {setData, invalidate}
+       
+        const invalidate = (${signature}) => qc.invalidateQueries({queryKey: getQueryKeyVariables(variables)});
+        const invalidateAll = () => qc.invalidateQueries({queryKey});
+        
+         const fetchQuery = <TError = unknown>(
+      args: IUseFetcherArgs<${operationVariablesTypes}>,
+      options?: Partial<UseQueryOptions<${operationResultType}, TError>>
+    ) =>
+    qc.fetchQuery<${operationResultType}, TError>({
+      queryKey: getQueryKeyVariables(args.variables!),
+      queryFn: fetchData.bind(null, args),
+      ...options
+    });
+        
+        return {queryKey, getQueryKeyVariables, setData, invalidate, invalidateAll, fetchQuery}
     }`;
 }
 

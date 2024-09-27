@@ -197,8 +197,8 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-    // We can't generate a fetcher field since we can't call react hooks outside of a React Fucntion Component
-    // Related: https://reactjs.org/docs/hooks-rules.html
+        // We can't generate a fetcher field since we can't call react hooks outside of a React Fucntion Component
+        // Related: https://reactjs.org/docs/hooks-rules.html
         if (this._isReactHook) return '';
 
         const variables = `variables${hasRequiredVariables ? '' : '?'}: ${operationVariablesTypes}`;
