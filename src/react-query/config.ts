@@ -1,7 +1,14 @@
 import {RawClientSideBasePluginConfig} from '@graphql-codegen/visitor-plugin-common';
 
 export type HardcodedFetch = { endpoint: string; fetchParams?: string | Record<string, any> };
-export type CustomFetch = { func: string; isReactHook?: boolean } | string;
+// export type CustomFetch = { func: string; isReactHook?: boolean } | string;
+export type CustomFetch = {
+    queryFunc: string;
+    infiniteQueryFunc: string;
+    queryAndQueryClientFunc: string;
+    mutationFunc: string;
+    isQueryAndQueryClient?: boolean;
+};
 
 /**
  * @description This plugin generates `React-Query` Hooks with TypeScript typings.
@@ -85,6 +92,25 @@ export interface ReactQueryRawPluginConfig
      * ```
      */
     exposeFetcher?: boolean;
+
+    /**
+     * @default false
+     * @description For each generate query hook adds `fetcher` field with a corresponding GraphQL query using the fetcher.
+     * It is useful for `queryClient.fetchQuery` and `queryClient.prefetchQuery`.
+     * @exampleMarkdown
+     * ```ts
+     * export const {useQuery: useCustomersWithPaginationQuery, useQueryClient: useCustomersWithPaginationQueryClient} = createQueryAndQueryClientHook<
+     *    ICustomersWithPaginationQuery,
+     *    ICustomersWithPaginationQueryVariables
+     * >(CustomersWithPaginationQueryDocument, EQueryKey.CustomersWithPaginationQuery);
+     *
+     * export const useCustomerCreateMutation = createMutationHook<
+     *     ICustomerCreateMutation,
+     *     ICustomerCreateMutationVariables
+     * >(CustomerCreateMutationDocument, EMutationKey.CustomerCreateMutation);
+     * ```
+     */
+    exposeFactory?: boolean;
 
     /**
      * @default unknown

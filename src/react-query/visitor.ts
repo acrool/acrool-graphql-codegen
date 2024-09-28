@@ -11,7 +11,6 @@ import {
     generateMutationKeyMaker,
     generateQueryKeyMaker,
 } from './variables-generator';
-import {FragmentDefinitionNode} from "graphql/index";
 
 
 
