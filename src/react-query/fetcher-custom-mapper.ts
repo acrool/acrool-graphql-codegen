@@ -118,23 +118,11 @@ export class CustomMapperFetcher implements FetcherRenderer {
             : `${typedFetcher}(${documentVariableName}, args)`;
 
         return `export const {useQuery: use${operationName}, useQueryClient: use${operationName}Client} = createQueryAndQueryClientHook<
-    ${operationResultType},
-    IUseFetcherArgs<${operationVariablesTypes}>
+   ${operationResultType}, ${operationVariablesTypes},
 >(${documentVariableName}, EQueryKey.${operationName});`;
-
-    //     return `export const use${operationName} = <
-    //   TData = ${operationResultType},
-    //   TError = ${this.visitor.config.errorType}
-    // >(
-    //   ${variables},
-    //   ${options}
-    // ) =>
-    // ${hookConfig.query.hook}<${operationResultType}, TError, TData>({
-    //   queryKey: ${generateQueryKey(node, hasRequiredVariables)},
-    //   queryFn: ${impl},
-    //   ...options
-    // });`;
     }
+
+
 
     generateMutationHook(
         node: OperationDefinitionNode,
@@ -155,17 +143,24 @@ export class CustomMapperFetcher implements FetcherRenderer {
             ? `${typedFetcher}(${documentVariableName})`
             : `(${variables}) => ${typedFetcher}(${documentVariableName}, variables)()`;
 
-        return `export const use${operationName} = <
-      TError = ${this.visitor.config.errorType},
-      TContext = unknown
-    >(${options}) =>
-    ${
-    hookConfig.mutation.hook
-}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>({
-      mutationKey: ${generateMutationKey(node)},
-      mutationFn: ${impl},
-      ...options
-    });`;
+        return `export const use${operationName} = createMutationHook<
+    ${operationResultType}, ${operationVariablesTypes},
+>(${documentVariableName}, EMutationKey.${operationName});
+
+`;
+
+
+//         return `export const use${operationName} = <
+//       TError = ${this.visitor.config.errorType},
+//       TContext = unknown
+//     >(${options}) =>
+//     ${
+//     hookConfig.mutation.hook
+// }<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>({
+//       mutationKey: ${generateMutationKey(node)},
+//       mutationFn: ${impl},
+//       ...options
+//     });`;
     }
 
     generateSubscriptionHook(
@@ -194,23 +189,4 @@ export class CustomMapperFetcher implements FetcherRenderer {
     `;
     }
 
-    generateFetcherFetch(
-        node: OperationDefinitionNode,
-        documentVariableName: string,
-        operationName: string,
-        operationResultType: string,
-        operationVariablesTypes: string,
-        hasRequiredVariables: boolean,
-    ): string {
-        // We can't generate a fetcher field since we can't call react hooks outside of a React Fucntion Component
-        // Related: https://reactjs.org/docs/hooks-rules.html
-        if (this._isReactHook) return '';
-
-        const variables = `variables${hasRequiredVariables ? '' : '?'}: ${operationVariablesTypes}`;
-
-        const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
-        const impl = `${typedFetcher}(${documentVariableName}, variables, options)`;
-
-        return `\nuse${operationName}.fetcher = (${variables}, options?: RequestInit['headers']) => ${impl};`;
-    }
 }

@@ -9,9 +9,9 @@ import {CustomMapperFetcher} from './fetcher-custom-mapper';
 import {
     generateInfiniteQueryKeyMaker,
     generateMutationKeyMaker,
-    generateQueryClickHook,
     generateQueryKeyMaker,
 } from './variables-generator';
+import {FragmentDefinitionNode} from "graphql/index";
 
 
 
@@ -132,13 +132,15 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
                 identifier => `${this.config.useTypeImports ? 'type ' : ''}${identifier}`,
             ),
         ];
-
+        
         const moduleName = this.config.legacyMode ? 'react-query' : '@tanstack/react-query';
+
+        
 
         return [
             ...baseImports,
             `import { ${hookAndTypeImports.join(', ')} } from '${moduleName}';`,
-            `import {gql, useSubscription, SubscriptionHookOptions} from '@apollo/client';`,
+            'import {gql, useSubscription, SubscriptionHookOptions} from \'@apollo/client\';',
         ];
     }
 
@@ -159,6 +161,7 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
         return pascalCase(operationType);
     }
 
+    
     protected buildOperation(
         node: OperationDefinitionNode,
         documentVariableName: string,
@@ -179,127 +182,90 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
         operationVariablesTypes = this._externalImportPrefix + operationVariablesTypes;
 
 
-        let query: string = null;
+        const query: string[] = [];
+        const queryNames: string[] = [];
         switch (operationType){
-            case 'Query':
-                query = this.fetcher.generateQueryHook(
+        case 'Query':
+            query.push(this.fetcher.generateQueryHook(
+                node,
+                documentVariableName,
+                operationName,
+                operationResultType,
+                operationVariablesTypes,
+                hasRequiredVariables,
+            ));
+            if (this.config.exposeDocument) {
+                query.push(`use${operationName}.document = ${documentVariableName}`);
+            }
+            if (this.config.exposeQueryKeys) {
+                query.push(generateQueryKeyMaker(
+                    node,
+                    operationName,
+                    operationVariablesTypes,
+                    hasRequiredVariables,
+                ));
+            }
+
+            if (this.config.addInfiniteQuery) {
+                query.push(this.fetcher.generateInfiniteQueryHook(
                     node,
                     documentVariableName,
                     operationName,
                     operationResultType,
                     operationVariablesTypes,
                     hasRequiredVariables,
-                );
-                if (this.config.exposeDocument) {
-                    query += `\nuse${operationName}.document = ${documentVariableName};\n`;
-                }
+                ));
+                
                 if (this.config.exposeQueryKeys) {
-                    query += `\n${generateQueryKeyMaker(
+                    query.push(generateInfiniteQueryKeyMaker(
                         node,
                         operationName,
                         operationVariablesTypes,
                         hasRequiredVariables,
-                    )}\n`;
+                    ));
                 }
+            }
 
-                if (this.config.exposeQueryClientHook) {
-                    query += `\n${generateQueryClickHook(
-                        node,
-                        documentVariableName,
-                        operationName,
-                        operationResultType,
-                        operationVariablesTypes,
-                        hasRequiredVariables,
-                    )}\n`;
-                }
-                if (this.config.addInfiniteQuery) {
-                    query += `\n${this.fetcher.generateInfiniteQueryHook(
-                        node,
-                        documentVariableName,
-                        operationName,
-                        operationResultType,
-                        operationVariablesTypes,
-                        hasRequiredVariables,
-                    )}\n`;
-                    if (this.config.exposeQueryKeys) {
-                        query += `\n${generateInfiniteQueryKeyMaker(
-                            node,
-                            operationName,
-                            operationVariablesTypes,
-                            hasRequiredVariables,
-                        )}\n`;
-                    }
-                }
+            // The reason we're looking at the private field of the CustomMapperFetcher to see if it's a react hook
+            // is to prevent calling generateFetcherFetch for each query since all the queries won't be able to generate
+            // a fetcher field anyways.
 
-                // The reason we're looking at the private field of the CustomMapperFetcher to see if it's a react hook
-                // is to prevent calling generateFetcherFetch for each query since all the queries won't be able to generate
-                // a fetcher field anyways.
-                if (this.config.exposeFetcher && !(this.fetcher as any)._isReactHook) {
-                    query += this.fetcher.generateFetcherFetch(
-                        node,
-                        documentVariableName,
-                        operationName,
-                        operationResultType,
-                        operationVariablesTypes,
-                        hasRequiredVariables,
-                    );
-                }
-                return query;
+            return query.join('\n');
 
 
 
-             case 'Mutation':
-                 query = this.fetcher.generateMutationHook(
-                     node,
-                     documentVariableName,
-                     operationName,
-                     operationResultType,
-                     operationVariablesTypes,
-                     hasRequiredVariables,
-                 );
-                 if (this.config.exposeMutationKeys) {
-                     query += generateMutationKeyMaker(node, operationName);
-                 }
-                 if (this.config.exposeFetcher && !(this.fetcher as any)._isReactHook) {
-                     query += this.fetcher.generateFetcherFetch(
-                         node,
-                         documentVariableName,
-                         operationName,
-                         operationResultType,
-                         operationVariablesTypes,
-                         hasRequiredVariables,
-                     );
-                 }
-                 return query;
+        case 'Mutation':
+            query.push(this.fetcher.generateMutationHook(
+                node,
+                documentVariableName,
+                operationName,
+                operationResultType,
+                operationVariablesTypes,
+                hasRequiredVariables,
+            ));
+            if (this.config.exposeMutationKeys) {
+                query.push(generateMutationKeyMaker(node, operationName));
+            }
+            return query.join('\n');
 
 
-            case 'Subscription':
-                // console.warn(
-                //     `Plugin "typescript-react-query" does not support GraphQL Subscriptions at the moment! Ignoring "${node.name.value}"...`,
-                // );
+        case 'Subscription':
+            // console.warn(
+            //     `Plugin "typescript-react-query" does not support GraphQL Subscriptions at the moment! Ignoring "${node.name.value}"...`,
+            // );
 
-                query = this.fetcher.generateSubscriptionHook(
-                    node,
-                    documentVariableName,
-                    operationName,
-                    operationResultType,
-                    operationVariablesTypes,
-                    hasRequiredVariables,
-                );
-                if (this.config.exposeMutationKeys) {
-                    query += generateMutationKeyMaker(node, operationName);
-                }
-                if (this.config.exposeFetcher && !(this.fetcher as any)._isReactHook) {
-                    query += this.fetcher.generateFetcherFetch(
-                        node,
-                        documentVariableName,
-                        operationName,
-                        operationResultType,
-                        operationVariablesTypes,
-                        hasRequiredVariables,
-                    );
-                }
-                return query;
+            query.push(this.fetcher.generateSubscriptionHook(
+                node,
+                documentVariableName,
+                operationName,
+                operationResultType,
+                operationVariablesTypes,
+                hasRequiredVariables,
+            ));
+            if (this.config.exposeMutationKeys) {
+                query.push(generateMutationKeyMaker(node, operationName));
+            }
+            return query.join('\n');
         }
 
         return null;
