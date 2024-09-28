@@ -1,6 +1,6 @@
 {
   "name": "@acrool/graphql-codegen-react-query",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "react-query for graphql-code-generator",
   "keywords": [
     "typescript",
