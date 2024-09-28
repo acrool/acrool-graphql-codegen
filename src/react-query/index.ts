@@ -17,12 +17,14 @@ export const plugin: PluginFunction<ReactQueryRawPluginConfig, Types.ComplexPlug
             allAst.definitions.filter(
                 d => d.kind === Kind.FRAGMENT_DEFINITION,
             ) as FragmentDefinitionNode[]
-        ).map(fragmentDef => ({
-            node: fragmentDef,
-            name: fragmentDef.name.value,
-            onType: fragmentDef.typeCondition.name.value,
-            isExternal: false,
-        })),
+        ).map(fragmentDef => {
+            return {
+                node: fragmentDef,
+                name: fragmentDef.name.value,
+                onType: fragmentDef.typeCondition.name.value,
+                isExternal: false,
+            };
+        }),
         ...(config.externalFragments || []),
     ];
 
@@ -30,10 +32,29 @@ export const plugin: PluginFunction<ReactQueryRawPluginConfig, Types.ComplexPlug
     // @ts-ignore strictFunctionTypes
     const visitorResult = oldVisit(allAst, {leave: visitor});
 
+
+    // 產生 Keys
+    const operationNames = documents.reduce<{queryKey: string[], mutationKey: string[]}>((curr, row) => {
+        row.document.definitions.map(x => {
+            if('name' in x && 'kind' in x && 'operation' in x){
+                if(x.operation === 'query' && x.name.kind === 'Name'){
+                    curr.queryKey.push(`${x.name.value} = '${x.name.value}'`);
+                }
+                if(x.operation === 'mutation' && x.name.kind === 'Name'){
+                    curr.mutationKey.push(`${x.name.value} = '${x.name.value}'`);
+                }
+            }
+        });
+        return curr;
+    }, {queryKey: [], mutationKey: []});
+
+
     if (visitor.hasOperations) {
         return {
             prepend: [...visitor.getImports(), visitor.getFetcherImplementation()],
             content: [
+                `export enum EQueryKey{\n${operationNames.queryKey.join(',\n')}}`,
+                `export enum EMutationKey{\n${operationNames.mutationKey.join(',\n')}}`,
                 visitor.fragments,
                 ...visitorResult.definitions.filter(t => typeof t === 'string'),
             ].join('\n'),

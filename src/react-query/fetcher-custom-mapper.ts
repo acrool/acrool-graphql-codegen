@@ -4,48 +4,70 @@ import {
     ParsedMapper,
     parseMapper,
 } from '@graphql-codegen/visitor-plugin-common';
-import {CustomFetch} from './config';
+import {ReactQueryRawPluginConfig} from './config';
 import {FetcherRenderer} from './fetcher';
-import {
-    generateInfiniteQueryKey,
-    generateMutationKey,
-    generateQueryKey,
-} from './variables-generator';
 import {ReactQueryVisitor} from './visitor';
 
-
-
 export class CustomMapperFetcher implements FetcherRenderer {
-    private _mapper: ParsedMapper;
-    private _isReactHook: boolean;
+    private _mapperQuery: ParsedMapper;
+    private _mapperInfiniteQuery: ParsedMapper;
+    private _mapperQueryClient: ParsedMapper;
+    private _mapperMutation: ParsedMapper;
+    private _isQueryAndQueryClient: boolean;
 
-    constructor(private visitor: ReactQueryVisitor, customFetcher: CustomFetch) {
-        if (typeof customFetcher === 'string') {
-            customFetcher = {func: customFetcher};
+    constructor(private visitor: ReactQueryVisitor, customFetcher: ReactQueryRawPluginConfig['fetcher']) {
+        if (typeof customFetcher === 'undefined') {
+            customFetcher = {
+                queryFunc: 'createQueryHook',
+                queryAndQueryClientFunc: 'createQueryAndQueryClientHook',
+                infiniteQueryFunc: 'createInfiniteQueryHook',
+                mutationFunc: 'createMutationHook',
+                isQueryAndQueryClient: true,
+            };
         }
-        this._mapper = parseMapper(customFetcher.func);
-        this._isReactHook = customFetcher.isReactHook;
+        this._mapperQuery = parseMapper(customFetcher.queryFunc);
+        this._mapperQueryClient = parseMapper(customFetcher.queryAndQueryClientFunc);
+        this._mapperInfiniteQuery = parseMapper(customFetcher.infiniteQueryFunc);
+        this._mapperMutation = parseMapper(customFetcher.mutationFunc);
+        this._isQueryAndQueryClient = customFetcher.isQueryAndQueryClient;
     }
 
-    private getFetcherFnName(operationResultType: string, operationVariablesTypes: string): string {
-        return `${this._mapper.type}<${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>>`;
+    private getFetcherQueryFnName(): string {
+        return this._mapperQuery.type;
+    }
+    private getFetcherInfiniteQueryFnName(): string {
+        return this._mapperInfiniteQuery.type;
+    }
+    private getFetcherQueryClientFnName(): string {
+        return this._mapperQueryClient.type;
+    }
+    private getFetcherMutationFnName(): string {
+        return this._mapperMutation.type;
     }
     private getSubscriptionFnName(operationResultType: string, operationVariablesTypes: string): string {
         return `useSubscription<TData, ${operationVariablesTypes}>`;
     }
 
     generateFetcherImplementaion(): string {
-        if (this._mapper.isExternal) {
+        if (this._mapperQuery.isExternal) {
             return buildMapperImport(
-                this._mapper.source,
+                this._mapperQuery.source,
                 [
                     {
-                        identifier: 'IUseFetcherArgs',
-                        asDefault: false,
+                        identifier: this._mapperQuery.type,
+                        asDefault: this._mapperQuery.default,
                     },
                     {
-                        identifier: this._mapper.type,
-                        asDefault: this._mapper.default,
+                        identifier: this._mapperQueryClient.type,
+                        asDefault: this._mapperQueryClient.isExternal ? this._mapperQueryClient.default : false,
+                    },
+                    {
+                        identifier: this._mapperInfiniteQuery.type,
+                        asDefault: this._mapperInfiniteQuery.isExternal ? this._mapperInfiniteQuery.default : false,
+                    },
+                    {
+                        identifier: this._mapperMutation.type,
+                        asDefault: this._mapperMutation.isExternal ? this._mapperMutation.default : false,
                     },
                 ],
                 this.visitor.config.useTypeImports,
@@ -63,37 +85,18 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-        const pageParamKey = `pageParamKey: keyof ${operationVariablesTypes}`;
-        const variables = `variables${hasRequiredVariables ? '' : '?'}: IUseFetcherArgs<${operationVariablesTypes}>`;
-
         const hookConfig = this.visitor.queryMethodMap;
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.infiniteQuery.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.infiniteQuery.options);
 
-        const options = `options?: Partial<${hookConfig.infiniteQuery.options}<${operationResultType}, TError, TData>>`;
+        const typedFetcher = this.getFetcherInfiniteQueryFnName();
 
-        const typedFetcher = this.getFetcherFnName(operationResultType, `IUseFetcherArgs<${operationVariablesTypes}>`);
-        const implHookOuter = this._isReactHook
-            ? `const query = ${typedFetcher}(${documentVariableName})`
-            : '';
-        const impl = this._isReactHook
-            ? '(metaData) => query({...variables, ...(metaData.pageParam ?? {})})'
-            : `(metaData) => ${typedFetcher}(${documentVariableName}, {...variables, ...(metaData.pageParam ?? {})})()`;
+        const impl = `use${operationName} = ${typedFetcher}`;
 
-        return `export const useInfinite${operationName} = <
-      TData = ${operationResultType},
-      TError = ${this.visitor.config.errorType}
-    >(
-      ${pageParamKey},
-      ${variables},
-      ${options}
-    ) =>{
-    ${implHookOuter}
-    return ${hookConfig.infiniteQuery.hook}<${operationResultType}, TError, TData>({
-      queryKey: ${generateInfiniteQueryKey(node, hasRequiredVariables)},
-      queryFn: ${impl},
-      ...options
-    })};`;
+        return `export const ${impl}<
+   ${operationResultType}, 
+   ${operationVariablesTypes}
+>(${documentVariableName}, EQueryKey.${operationName});`;
     }
 
     generateQueryHook(
@@ -104,32 +107,23 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-        const variables = `args${hasRequiredVariables ? '' : '?'}: IUseFetcherArgs<${operationVariablesTypes}>`;
-
         const hookConfig = this.visitor.queryMethodMap;
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.query.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.query.options);
 
-        const options = `options?: Partial<${hookConfig.query.options}<${operationResultType}, TError, TData>>`;
+        const typedFetcher = this.getFetcherQueryFnName();
+        const typedFetcherAndClient = this.getFetcherQueryClientFnName();
+        const impl = this._isQueryAndQueryClient && !!typedFetcherAndClient
+            ? `{useQuery: use${operationName}, useQueryClient: use${operationName}Client} = ${typedFetcherAndClient}`
+            : `use${operationName} = ${typedFetcher}`;
 
-        const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
-        const impl = this._isReactHook
-            ? `${typedFetcher}(${documentVariableName}).bind(null, args)`
-            : `${typedFetcher}(${documentVariableName}, args)`;
-
-        return `export const use${operationName} = <
-      TData = ${operationResultType},
-      TError = ${this.visitor.config.errorType}
-    >(
-      ${variables},
-      ${options}
-    ) =>
-    ${hookConfig.query.hook}<${operationResultType}, TError, TData>({
-      queryKey: ${generateQueryKey(node, hasRequiredVariables)},
-      queryFn: ${impl},
-      ...options
-    });`;
+        return `export const ${impl}<
+   ${operationResultType}, 
+   ${operationVariablesTypes}
+>(${documentVariableName}, EQueryKey.${operationName});`;
     }
+
+
 
     generateMutationHook(
         node: OperationDefinitionNode,
@@ -139,28 +133,18 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-        const variables = `variables?: IUseFetcherArgs<${operationVariablesTypes}>`;
         const hookConfig = this.visitor.queryMethodMap;
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.mutation.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.mutation.options);
 
-        const options = `options?: Partial<${hookConfig.mutation.options}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>>`;
-        const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
-        const impl = this._isReactHook
-            ? `${typedFetcher}(${documentVariableName})`
-            : `(${variables}) => ${typedFetcher}(${documentVariableName}, variables)()`;
+        const typedFetcher = this.getFetcherMutationFnName();
 
-        return `export const use${operationName} = <
-      TError = ${this.visitor.config.errorType},
-      TContext = unknown
-    >(${options}) =>
-    ${
-    hookConfig.mutation.hook
-}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>({
-      mutationKey: ${generateMutationKey(node)},
-      mutationFn: ${impl},
-      ...options
-    });`;
+        return `export const use${operationName} = ${typedFetcher}<
+    ${operationResultType}, 
+    ${operationVariablesTypes}
+>(${documentVariableName}, EMutationKey.${operationName});
+
+`;
     }
 
     generateSubscriptionHook(
@@ -189,23 +173,4 @@ export class CustomMapperFetcher implements FetcherRenderer {
     `;
     }
 
-    generateFetcherFetch(
-        node: OperationDefinitionNode,
-        documentVariableName: string,
-        operationName: string,
-        operationResultType: string,
-        operationVariablesTypes: string,
-        hasRequiredVariables: boolean,
-    ): string {
-        // We can't generate a fetcher field since we can't call react hooks outside of a React Fucntion Component
-        // Related: https://reactjs.org/docs/hooks-rules.html
-        if (this._isReactHook) return '';
-
-        const variables = `variables${hasRequiredVariables ? '' : '?'}: ${operationVariablesTypes}`;
-
-        const typedFetcher = this.getFetcherFnName(operationResultType, operationVariablesTypes);
-        const impl = `${typedFetcher}(${documentVariableName}, variables, options)`;
-
-        return `\nuse${operationName}.fetcher = (${variables}, options?: RequestInit['headers']) => ${impl};`;
-    }
 }
