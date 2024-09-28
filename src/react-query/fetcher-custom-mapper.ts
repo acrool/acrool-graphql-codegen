@@ -59,6 +59,32 @@ export class CustomMapperFetcher implements FetcherRenderer {
     }
 
     generateFetcherImplementaion(): string {
+        if (this._mapperQuery.isExternal) {
+            return buildMapperImport(
+                this._mapperQuery.source,
+                [
+                    {
+                        identifier: this._mapperQuery.type,
+                        asDefault: this._mapperQuery.default,
+                    },
+                    {
+                        identifier: this._mapperQueryClient.type,
+                        asDefault: this._mapperQueryClient.isExternal ? this._mapperQueryClient.default : false,
+                    },
+                    {
+                        identifier: this._mapperInfiniteQuery.type,
+                        asDefault: this._mapperInfiniteQuery.isExternal ? this._mapperInfiniteQuery.default : false,
+                    },
+                    {
+                        identifier: this._mapperMutation.type,
+                        asDefault: this._mapperMutation.isExternal ? this._mapperMutation.default : false,
+                    },
+                ],
+                this.visitor.config.useTypeImports,
+            );
+        }
+
+
         // if (this._mapper.isExternal) {
         //     return buildMapperImport(
         //         this._mapper.source,
