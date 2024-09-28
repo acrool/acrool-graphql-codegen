@@ -118,7 +118,8 @@ export class CustomMapperFetcher implements FetcherRenderer {
             : `${typedFetcher}(${documentVariableName}, args)`;
 
         return `export const {useQuery: use${operationName}, useQueryClient: use${operationName}Client} = createQueryAndQueryClientHook<
-   ${operationResultType}, ${operationVariablesTypes},
+   ${operationResultType}, 
+   ${operationVariablesTypes}
 >(${documentVariableName}, EQueryKey.${operationName});`;
     }
 
@@ -144,7 +145,8 @@ export class CustomMapperFetcher implements FetcherRenderer {
             : `(${variables}) => ${typedFetcher}(${documentVariableName}, variables)()`;
 
         return `export const use${operationName} = createMutationHook<
-    ${operationResultType}, ${operationVariablesTypes},
+    ${operationResultType}, 
+    ${operationVariablesTypes}
 >(${documentVariableName}, EMutationKey.${operationName});
 
 `;

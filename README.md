@@ -25,6 +25,13 @@ const gnatt = () => {
 }
 ```
 
+## Release
+
+```bash
+yarn build && npm publish ./src/react-query --access=public
+```
+
+
 ## License
 
 MIT © [acrool](https://github.com/acrool)
