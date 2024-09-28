@@ -131,7 +131,7 @@ interface GraphQLFileUpload {
 export default config
 ```
 
-copy ./src/react-query/example in your project lib path
+copy ./src/example in your project lib path
 
 add your gql file
 
@@ -152,7 +152,7 @@ yarn build && npm publish ./src/react-query --access=public
 ```
 
 - [@acrool/graphql-codegen-react-query](https://github.com/acrool/acrool-graphql-codegen/tree/main/src/react-query)
-- [Example](./src/react-query/example)
+- [Example](./src/example)
 
 
 ## License
