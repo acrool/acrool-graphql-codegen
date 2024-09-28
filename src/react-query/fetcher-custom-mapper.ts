@@ -4,16 +4,9 @@ import {
     ParsedMapper,
     parseMapper,
 } from '@graphql-codegen/visitor-plugin-common';
-import {CustomFetch, ReactQueryRawPluginConfig} from './config';
+import {ReactQueryRawPluginConfig} from './config';
 import {FetcherRenderer} from './fetcher';
-import {
-    generateInfiniteQueryKey,
-    generateMutationKey,
-    generateQueryKey,
-} from './variables-generator';
 import {ReactQueryVisitor} from './visitor';
-
-
 
 export class CustomMapperFetcher implements FetcherRenderer {
     private _mapperQuery: ParsedMapper;
@@ -23,7 +16,7 @@ export class CustomMapperFetcher implements FetcherRenderer {
     private _isQueryAndQueryClient: boolean;
 
     constructor(private visitor: ReactQueryVisitor, customFetcher: ReactQueryRawPluginConfig['fetcher']) {
-        if (typeof customFetcher === 'string') {
+        if (typeof customFetcher === 'undefined') {
             customFetcher = {
                 queryFunc: 'createQueryHook',
                 queryAndQueryClientFunc: 'createQueryAndQueryClientHook',
@@ -51,9 +44,6 @@ export class CustomMapperFetcher implements FetcherRenderer {
     private getFetcherMutationFnName(): string {
         return this._mapperMutation.type;
     }
-    // private getFetcherFnName(operationResultType: string, operationVariablesTypes: string): string {
-    //     return `${this._mapper.type}<${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>>`;
-    // }
     private getSubscriptionFnName(operationResultType: string, operationVariablesTypes: string): string {
         return `useSubscription<TData, ${operationVariablesTypes}>`;
     }
@@ -84,24 +74,6 @@ export class CustomMapperFetcher implements FetcherRenderer {
             );
         }
 
-
-        // if (this._mapper.isExternal) {
-        //     return buildMapperImport(
-        //         this._mapper.source,
-        //         [
-        //             {
-        //                 identifier: 'IUseFetcherArgs',
-        //                 asDefault: false,
-        //             },
-        //             {
-        //                 identifier: this._mapper.type,
-        //                 asDefault: this._mapper.default,
-        //             },
-        //         ],
-        //         this.visitor.config.useTypeImports,
-        //     );
-        // }
-
         return null;
     }
 
@@ -113,9 +85,6 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-        // const pageParamKey = `pageParamKey: keyof ${operationVariablesTypes}`;
-        // const variables = `variables${hasRequiredVariables ? '' : '?'}: IUseFetcherArgs<${operationVariablesTypes}>`;
-
         const hookConfig = this.visitor.queryMethodMap;
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.infiniteQuery.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.infiniteQuery.options);
@@ -138,13 +107,9 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-        // const variables = `args${hasRequiredVariables ? '' : '?'}: IUseFetcherArgs<${operationVariablesTypes}>`;
-
         const hookConfig = this.visitor.queryMethodMap;
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.query.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.query.options);
-
-        // const options = `options?: Partial<${hookConfig.query.options}<${operationResultType}, TError, TData>>`;
 
         const typedFetcher = this.getFetcherQueryFnName();
         const typedFetcherAndClient = this.getFetcherQueryClientFnName();
@@ -168,12 +133,10 @@ export class CustomMapperFetcher implements FetcherRenderer {
         operationVariablesTypes: string,
         hasRequiredVariables: boolean,
     ): string {
-        const variables = `<!--variables?: IUseFetcherArgs<${operationVariablesTypes}>-->`;
         const hookConfig = this.visitor.queryMethodMap;
         this.visitor.reactQueryHookIdentifiersInUse.add(hookConfig.mutation.hook);
         this.visitor.reactQueryOptionsIdentifiersInUse.add(hookConfig.mutation.options);
 
-        // const options = `options?: Partial<${hookConfig.mutation.options}<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>>`;
         const typedFetcher = this.getFetcherMutationFnName();
 
         return `export const use${operationName} = ${typedFetcher}<
@@ -182,19 +145,6 @@ export class CustomMapperFetcher implements FetcherRenderer {
 >(${documentVariableName}, EMutationKey.${operationName});
 
 `;
-
-
-//         return `export const use${operationName} = <
-//       TError = ${this.visitor.config.errorType},
-//       TContext = unknown
-//     >(${options}) =>
-//     ${
-//     hookConfig.mutation.hook
-// }<${operationResultType}, TError, IUseFetcherArgs<${operationVariablesTypes}>, TContext>({
-//       mutationKey: ${generateMutationKey(node)},
-//       mutationFn: ${impl},
-//       ...options
-//     });`;
     }
 
     generateSubscriptionHook(

@@ -41,7 +41,7 @@ export interface ReactQueryRawPluginConfig
      * - `file#identifier` - You can use custom fetcher method that should implement the exported `ReactQueryFetcher` interface. Example: `./my-fetcher#myCustomFetcher`.
      * - `graphql-request`: Will generate each hook with `client` argument, where you should pass your own `GraphQLClient` (created from `graphql-request`).
      */
-    fetcher?: 'fetch' | 'graphql-request' | CustomFetch;
+    fetcher?: CustomFetch;
 
     /**
      * @default false

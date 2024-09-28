@@ -94,7 +94,7 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
             ? `${this.config.importOperationTypesFrom}.`
             : '';
         this._documents = documents;
-        this.fetcher = this.createFetcher(rawConfig.fetcher || 'fetch');
+        this.fetcher = this.createFetcher(rawConfig.fetcher);
 
         autoBind(this);
     }
@@ -104,10 +104,6 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
     }
 
     private createFetcher(raw: ReactQueryRawPluginConfig['fetcher']): FetcherRenderer {
-        // @TODO: imagine10255 remove other method
-        // if (typeof raw === 'object' && 'endpoint' in raw) {
-        //     return new HardcodedFetchFetcher(this, raw);
-        // }
         return new CustomMapperFetcher(this, raw);
     }
 
