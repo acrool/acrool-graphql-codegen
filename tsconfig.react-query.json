@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "outDir": "src/react-query/dist",
     "target": "es6",
     "module": "commonjs",
     "strict": true,
@@ -10,6 +10,7 @@
     "noImplicitAny": false,
     "declaration": true,
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "src/**/dist"]
+  "include": ["src/react-query"],
+  "exclude": ["node_modules", "src/**/dist"],
+  "extends": "./tsconfig.build.json"
 }
