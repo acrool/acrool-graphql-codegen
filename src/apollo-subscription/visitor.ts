@@ -6,9 +6,6 @@ import {ClientSideBasePluginConfig, ClientSideBaseVisitor, DocumentMode, getConf
 import {ReactQueryRawPluginConfig} from './config';
 import {FetcherRenderer} from './fetcher';
 import {CustomMapperFetcher} from './fetcher-custom-mapper';
-import {
-    generateMutationKeyMaker,
-} from './variables-generator';
 
 
 
@@ -158,6 +155,7 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
             //     `Plugin "typescript-react-query" does not support GraphQL Subscriptions at the moment! Ignoring "${node.name.value}"...`,
             // );
 
+            return '';
             query.push(this.fetcher.generateSubscriptionHook(
                 node,
                 documentVariableName,
@@ -166,9 +164,6 @@ export class ReactQueryVisitor extends ClientSideBaseVisitor<
                 operationVariablesTypes,
                 hasRequiredVariables,
             ));
-            if (this.config.exposeMutationKeys) {
-                query.push(generateMutationKeyMaker(node, operationName));
-            }
             return query.join('\n');
         }
 
