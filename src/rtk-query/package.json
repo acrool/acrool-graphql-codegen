@@ -1,11 +1,11 @@
 {
-  "name": "@acrool/graphql-codegen-react-query",
-  "version": "3.0.1",
-  "description": "react-query for graphql-code-generator",
+  "name": "@acrool/graphql-codegen-rtk-query",
+  "version": "1.0.0",
+  "description": "trk-query for graphql-code-generator",
   "keywords": [
     "typescript",
     "graphql-code-generator",
-    "react-query"
+    "trk-query"
   ],
   "private": false,
   "license": "MIT",
