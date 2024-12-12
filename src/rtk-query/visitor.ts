@@ -123,7 +123,7 @@ export { injectedRtkApi as api };
         const operationTypeString = operationType.toLowerCase();
 
         const functionsString =
-      `query: (variables) => ({ document: ${documentVariableName}, args })
+      `query: (args) => ({ document: ${documentVariableName}, args })
       ${this.injectTransformResponse(Generics)}`.trim();
 
         const endpointString = `

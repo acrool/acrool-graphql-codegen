@@ -1,6 +1,6 @@
 {
   "name": "@acrool/graphql-codegen-rtk-query",
-  "version": "3.0.1",
+  "version": "0.0.2",
   "description": "trk-query for graphql-code-generator",
   "keywords": [
     "typescript",
@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/acrool/graphql-codegen-rtk-query.git"
+    "url": "https://github.com/acrool/acrool-graphql-codegen"
   },
   "engines": {
     "node": ">=14"
