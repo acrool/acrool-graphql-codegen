@@ -116,7 +116,7 @@ export { injectedRtkApi as api };
             return '';
         }
 
-        const Generics = `${operationResultType}, ${operationVariablesTypes}${
+        const Generics = `${operationResultType}, IUseFetcherArgs<${operationVariablesTypes}>${
             hasRequiredVariables ? '' : ' | void'
         }`;
 

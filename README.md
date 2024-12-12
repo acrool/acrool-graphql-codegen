@@ -148,7 +148,8 @@ yarn generate
 ## Release
 
 ```bash
-yarn build && npm publish ./src/react-query --access=public
+yarn build:qtk-query && npm publish ./src/rtk-query --access=public
+yarn build:apollo-subscription && npm publish ./src/apollo-subscription --access=public
 ```
 
 - [@acrool/graphql-codegen-react-query](https://github.com/acrool/acrool-graphql-codegen/tree/main/src/react-query)

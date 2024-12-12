@@ -15,7 +15,9 @@
   "scripts": {
     "build:claer": "rm -rf ./dist",
     "prepublishOnly": "run-s build",
-    "build": "run-s build:claer && tsc --project ./tsconfig.build.json",
+    "build:react-query": "run-s build:claer && tsc --project ./tsconfig.react-query.json",
+    "build:qtk-query": "run-s build:claer && tsc --project ./tsconfig.rtk-query.json",
+    "build:apollo-subscription": "run-s build:claer && tsc --project ./tsconfig.apollo-subscription.json",
     "lint:fix": "eslint ./src --fix",
     "cz": "git-cz",
     "test": "jest",
@@ -26,7 +28,7 @@
     "release:minor": "yarn release-cli -r minor && run-s postrelease",
     "release:patch": "yarn release-cli -r patch && run-s postrelease",
     "release:alpha": "yarn release-cli --prerelease alpha && run-s postrelease",
-    "postrelease": "# then run `git push --follow-tags origin main && yarn build && npm publish ./src/react-query --access=public` to publish"
+    "postrelease": "# then run `git push --follow-tags origin main && yarn build && npm publish ./src/__plugName__ --access=public` to publish"
   },
   "peerDependencies": {
     "graphql": "^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0"

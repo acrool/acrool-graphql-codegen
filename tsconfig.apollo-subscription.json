@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "src/apollo-subscription/dist",
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "declaration": true,
+  },
+  "include": ["src/apollo-subscription"],
+  "exclude": ["node_modules", "src/**/dist"],
+  "extends": "./tsconfig.build.json"
+}

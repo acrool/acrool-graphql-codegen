@@ -1,11 +1,12 @@
 {
-  "name": "@acrool/graphql-codegen-rtk-query",
-  "version": "0.0.3-test.0",
-  "description": "trk-query for graphql-code-generator",
+  "name": "@acrool/graphql-codegen-apollo-subscription",
+  "version": "3.0.1-test.0",
+  "description": "react-query for graphql-code-generator",
   "keywords": [
     "typescript",
     "graphql-code-generator",
-    "trk-query"
+    "apollo",
+    "subscription"
   ],
   "private": false,
   "license": "MIT",
