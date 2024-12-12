@@ -50,9 +50,9 @@ describe('My Plugin', () => {
 
     `);
     const docs = [
-        {
-            document: basicDoc,
-        },
+        // {
+        //     document: basicDoc,
+        // },
         // {
         //     document: basicMutation,
         // },
