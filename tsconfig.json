@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "src/react-query/dist",
+    "outDir": "dist",
     "target": "es6",
     "module": "commonjs",
     "strict": true,

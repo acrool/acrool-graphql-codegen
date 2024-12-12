@@ -4,7 +4,8 @@
   "keywords": [
     "typescript",
     "graphql-code-generator",
-    "react-query"
+    "react-query",
+    "trk-query"
   ],
   "private": false,
   "license": "MIT",
