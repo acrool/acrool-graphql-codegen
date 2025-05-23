@@ -31,6 +31,7 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
             importBaseApiAlternateName: getConfigValue(rawConfig.importBaseApiAlternateName, 'api'),
             addTransformResponse: getConfigValue(rawConfig.addTransformResponse, false),
             exportHooks: getConfigValue(rawConfig.exportHooks, false),
+            exportApi: getConfigValue(rawConfig.exportApi, false),
             overrideExisting: getConfigValue(rawConfig.overrideExisting, ''),
         });
         this._externalImportPrefix = this.config.importOperationTypesFrom
@@ -82,7 +83,7 @@ const injectedRtkApi = ${this.config.importBaseApiAlternateName}.injectEndpoints
   }),
 });
 
-export { injectedRtkApi as api };
+${this.config.exportApi ? 'export { injectedRtkApi as api }': ''};
 ` +
       (this.config.exportHooks
           ? `export const { ${this._hooks.join(', ')} } = injectedRtkApi;`
@@ -123,7 +124,7 @@ export { injectedRtkApi as api };
     ): string {
         const variables = `args${hasRequiredVariables ? '' : '?'}: SubscriptionHookOptions<TData, ${operationVariablesTypes}>`;
 
-        const typedFetcher = `useSubscription<TData, ${operationVariablesTypes}>`;;
+        const typedFetcher = `useSubscription<TData, ${operationVariablesTypes}>`;
         const impl = `${typedFetcher}(gql(${documentVariableName}), args);`;
 
         return `export const use${operationName} = <

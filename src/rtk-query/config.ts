@@ -81,6 +81,7 @@ export interface RTKConfig {
    * ```
    */
   exportHooks?: boolean;
+  exportApi?: boolean;
 
   /**
    * @name overrideExisting

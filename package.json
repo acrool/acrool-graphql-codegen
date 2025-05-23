@@ -1,5 +1,5 @@
 {
-  "name": "acrool-graphql-codegen",
+  "name": "@acrool/graphql-codegen",
   "description": "acrool graphql-code-generator plugins",
   "keywords": [
     "typescript",
