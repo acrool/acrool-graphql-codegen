@@ -83,7 +83,7 @@ const injectedRtkApi = ${this.config.importBaseApiAlternateName}.injectEndpoints
   }),
 });
 
-${this.config.exportApi ? 'export { injectedRtkApi as api }': ''};
+${this.config.exportApi ? 'export { injectedRtkApi as api }': ''}
 ` +
       (this.config.exportHooks
           ? `export const { ${this._hooks.join(', ')} } = injectedRtkApi;`
