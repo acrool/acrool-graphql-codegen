@@ -24,6 +24,7 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
         fragments: LoadedFragment[],
     protected rawConfig: RTKQueryRawPluginConfig,
     documents: Types.DocumentFile[],
+    outputFile?: string,
     ) {
         super(schema, fragments, rawConfig, {
             documentMode: DocumentMode.string,
@@ -38,6 +39,17 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
             ? `${this.config.importOperationTypesFrom}.`
             : '';
         this._documents = documents;
+
+        // 自動推斷 apiName
+        if (!this.config.apiName && outputFile) {
+            // 例如 auth.query.generated.ts -> authApi
+            const match = outputFile.match(/([^\/]+)\.(?:[a-zA-Z0-9]+)?\.generated\.ts$/) || outputFile.match(/([^\/]+)\.generated\.ts$/) || outputFile.match(/([^\/]+)\.ts$/);
+            if (match && match[1]) {
+                this.config.apiName = match[1].replace(/([A-Z])/g, '_$1').replace(/^_/, '').replace(/[-.]/g, '_') + 'Api';
+            } else {
+                this.config.apiName = 'api';
+            }
+        }
 
         autoBind(this);
     }
@@ -83,7 +95,7 @@ const injectedRtkApi = ${this.config.importBaseApiAlternateName}.injectEndpoints
   }),
 });
 
-${this.config.exportApi ? 'export { injectedRtkApi as api };': ''}
+${this.config.exportApi ? `export { injectedRtkApi as ${this.config.apiName || 'api'} };` : ''}
 ` +
       (this.config.exportHooks
           ? `export const { ${this._hooks.join(', ')} } = injectedRtkApi;`

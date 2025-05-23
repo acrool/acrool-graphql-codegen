@@ -137,6 +137,27 @@ export interface RTKConfig {
    * ```
    */
   addTransformResponse?: boolean;
+
+  /**
+   * @name apiName
+   * @description 產生的 api export 名稱，預設為 'api'，可用於根據 output 檔名自訂。
+   * @default 'api'
+   *
+   * @exampleMarkdown
+   * ```ts filename="codegen.ts"
+   *  const config = {
+   *    generates: {
+   *      'src/apis/userApi.ts': {
+   *        plugins: ['typescript-rtk-query'],
+   *        config: {
+   *          apiName: 'userApi',
+   *        },
+   *      },
+   *    },
+   *  };
+   * ```
+   */
+  apiName?: string;
 }
 
 export interface RTKQueryRawPluginConfig extends RawClientSideBasePluginConfig, RTKConfig {}

@@ -9,6 +9,7 @@ export const plugin: PluginFunction<RTKQueryRawPluginConfig, Types.ComplexPlugin
     schema: GraphQLSchema,
     documents: Types.DocumentFile[],
     config: RTKQueryRawPluginConfig,
+    info?: { outputFile?: string },
 ) => {
     const allAst = concatAST(documents.map(v => v.document));
 
@@ -26,7 +27,8 @@ export const plugin: PluginFunction<RTKQueryRawPluginConfig, Types.ComplexPlugin
         ...(config.externalFragments || []),
     ];
 
-    const visitor = new RTKQueryVisitor(schema, allFragments, config, documents);
+    const outputFile = info?.outputFile;
+    const visitor = new RTKQueryVisitor(schema, allFragments, config, documents, outputFile);
     // @ts-ignore strictFunctionTypes
     const visitorResult = oldVisit(allAst, {leave: visitor});
 
