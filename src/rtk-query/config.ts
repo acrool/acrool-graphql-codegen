@@ -150,14 +150,14 @@ export interface RTKConfig {
    *      'src/apis/userApi.ts': {
    *        plugins: ['typescript-rtk-query'],
    *        config: {
-   *          apiName: 'userApi',
+   *          exportApiName: 'userApi',
    *        },
    *      },
    *    },
    *  };
    * ```
    */
-  apiName?: string;
+  exportApiName?: string;
 
   /**
    * @name noExportDocument

@@ -35,6 +35,7 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
             exportApi: getConfigValue(rawConfig.exportApi, false),
             exportDocument: getConfigValue(rawConfig.exportDocument, false),
             overrideExisting: getConfigValue(rawConfig.overrideExisting, ''),
+            exportApiName: getConfigValue(rawConfig.exportApiName, undefined),
         });
         this._externalImportPrefix = this.config.importOperationTypesFrom
             ? `${this.config.importOperationTypesFrom}.`
@@ -42,13 +43,13 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
         this._documents = documents;
 
         // 自動推斷 apiName
-        if (!this.config.apiName && outputFile) {
+        if (!this.config.exportApiName && outputFile) {
             // 例如 auth.query.generated.ts -> authApi
             const match = outputFile.match(/([^\/]+)\.(?:[a-zA-Z0-9]+)?\.generated\.ts$/) || outputFile.match(/([^\/]+)\.generated\.ts$/) || outputFile.match(/([^\/]+)\.ts$/);
             if (match && match[1]) {
-                this.config.apiName = camelCase(match[1]) + 'Api';
+                this.config.exportApiName = camelCase(match[1]) + 'Api';
             } else {
-                this.config.apiName = 'api';
+                this.config.exportApiName = 'api';
             }
         }
 
@@ -96,7 +97,7 @@ const injectedRtkApi = ${this.config.importBaseApiAlternateName}.injectEndpoints
   }),
 });
 
-${this.config.exportApi ? `export { injectedRtkApi as ${this.config.apiName || 'api'} };` : ''}
+${this.config.exportApi ? `export { injectedRtkApi as ${this.config.exportApiName || 'api'} };` : ''}
 ` +
       (this.config.exportHooks
           ? `export const { ${this._hooks.join(', ')} } = injectedRtkApi;`
