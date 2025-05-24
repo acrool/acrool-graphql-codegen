@@ -158,6 +158,7 @@ export interface RTKConfig {
    * ```
    */
   exportApiName?: string;
+  exportDefaultApi?: boolean;
 
   /**
    * @name noExportDocument

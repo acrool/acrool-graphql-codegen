@@ -36,6 +36,7 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
             exportDocument: getConfigValue(rawConfig.exportDocument, false),
             overrideExisting: getConfigValue(rawConfig.overrideExisting, ''),
             exportApiName: getConfigValue(rawConfig.exportApiName, undefined),
+            exportDefaultApi: getConfigValue(rawConfig.exportDefaultApi, true),
         });
         this._externalImportPrefix = this.config.importOperationTypesFrom
             ? `${this.config.importOperationTypesFrom}.`
@@ -97,7 +98,11 @@ const injectedRtkApi = ${this.config.importBaseApiAlternateName}.injectEndpoints
   }),
 });
 
-${this.config.exportApi ? `export { injectedRtkApi as ${this.config.exportApiName || 'api'} };` : ''}
+${this.config.exportDefaultApi ?
+                'export default injectedRtkApi;' :
+                this.config.exportApi ? 
+                    `export { injectedRtkApi as ${this.config.exportApiName || 'api'} };` :
+                    ''}
 ` +
       (this.config.exportHooks
           ? `export const { ${this._hooks.join(', ')} } = injectedRtkApi;`
