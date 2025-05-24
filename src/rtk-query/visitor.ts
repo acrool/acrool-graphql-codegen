@@ -217,38 +217,14 @@ ${this.config.exportApi ? `export { injectedRtkApi as ${this.config.apiName || '
     }
 
     public OperationDefinition(node: OperationDefinitionNode) {
-        console.log('asasdasdasda');
+        // 保留父類別副作用（如 endpoints/hook 組裝）
+        super.OperationDefinition(node);
         const operationName = node.name?.value;
         if (!operationName) return null;
 
-        // 產生變數名稱
         const documentVar = `${pascalCase(operationName)}Document`;
-        // 用 print 產生 query string
         const queryString = `\`
 ${print(node)}\``;
-        // 產生內容
-        const code = `${this.config.exportDocument ? '' : 'export '}const ${documentVar} = ${queryString};`;
-
-        // 產生 endpoint/hook 等內容
-        const documentVariableName = documentVar;
-        // 修正 operationType 型別
-        const operationType = (node.operation.charAt(0).toUpperCase() + node.operation.slice(1)) as 'Query' | 'Mutation' | 'Subscription';
-        const operationTypeSuffix = this.getOperationSuffix(node, operationType);
-        const operationResultType = this.convertName(node, {
-            suffix: operationTypeSuffix + this._parsedConfig.operationResultSuffix,
-        });
-        const operationVariablesTypes = this.convertName(node, {
-            suffix: operationTypeSuffix + 'Variables',
-        });
-        const hasRequiredVariables = this.checkVariablesRequirements(node);
-        const additional = this.buildOperation(
-            node,
-            documentVariableName,
-            operationType,
-            operationResultType,
-            operationVariablesTypes,
-            hasRequiredVariables
-        );
-        return [code, additional].filter(Boolean).join('\n');
+        return `${this.config.exportDocument ? '' : 'export '}const ${documentVar} = ${queryString};`;
     }
 }

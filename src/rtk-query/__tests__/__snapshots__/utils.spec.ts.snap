@@ -17,7 +17,24 @@ query testQuery {
     }
   }
 }\`;
+
+const injectedRtkApi = baseApi.injectEndpoints({
+  endpoints: (build) => ({
+    testQuery: build.query<TestQueryQuery, IUseFetcherArgs<TestQueryQueryVariables> | void>({
+      query: (args) => ({ document: TestQueryDocument, args })
+    }),
+  }),
+});
+
+export { injectedRtkApi as api };
+export const { useTestQueryQuery, useLazyTestQueryQuery } = injectedRtkApi;
+
+
+
 ",
-  "prepend": [],
+  "prepend": [
+    "import { baseApi } from '@/library/graphql/baseApi';",
+    "import {gql, useSubscription, SubscriptionHookOptions} from '@apollo/client';",
+  ],
 }
 `;
