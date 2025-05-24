@@ -4,8 +4,7 @@
   "keywords": [
     "typescript",
     "graphql-code-generator",
-    "react-query",
-    "trk-query"
+    "react-query"
   ],
   "private": false,
   "license": "MIT",
@@ -16,7 +15,6 @@
     "build:claer": "rm -rf ./dist",
     "prepublishOnly": "run-s build",
     "build:react-query": "run-s build:claer && tsc --project ./tsconfig.react-query.json",
-    "build:qtk-query": "run-s build:claer && tsc --project ./tsconfig.rtk-query.json",
     "lint:fix": "eslint ./src --fix",
     "cz": "git-cz",
     "test": "jest",
