@@ -1,5 +1,5 @@
 import autoBind from 'auto-bind';
-import {pascalCase} from 'change-case-all';
+import {pascalCase, camelCase} from 'change-case-all';
 import {GraphQLSchema, OperationDefinitionNode, print} from 'graphql';
 import {Types} from '@graphql-codegen/plugin-helpers';
 import {
@@ -46,7 +46,7 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
             // 例如 auth.query.generated.ts -> authApi
             const match = outputFile.match(/([^\/]+)\.(?:[a-zA-Z0-9]+)?\.generated\.ts$/) || outputFile.match(/([^\/]+)\.generated\.ts$/) || outputFile.match(/([^\/]+)\.ts$/);
             if (match && match[1]) {
-                this.config.apiName = match[1].replace(/([A-Z])/g, '_$1').replace(/^_/, '').replace(/[-.]/g, '_') + 'Api';
+                this.config.apiName = camelCase(match[1]) + 'Api';
             } else {
                 this.config.apiName = 'api';
             }
