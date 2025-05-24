@@ -2,8 +2,8 @@ import {extname} from 'path';
 import {concatAST, FragmentDefinitionNode, GraphQLSchema, Kind} from 'graphql';
 import {oldVisit, PluginFunction, PluginValidateFn, Types} from '@graphql-codegen/plugin-helpers';
 import {LoadedFragment} from '@graphql-codegen/visitor-plugin-common';
-import {RTKQueryRawPluginConfig} from './config.js';
-import {RTKQueryVisitor} from './visitor.js';
+import {RTKQueryRawPluginConfig} from './config';
+import {RTKQueryVisitor} from './visitor';
 
 export const plugin: PluginFunction<RTKQueryRawPluginConfig, Types.ComplexPluginOutput> = (
     schema: GraphQLSchema,

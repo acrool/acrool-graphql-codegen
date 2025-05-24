@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`My Plugin Should greet 1`] = `
+{
+  "content": "
+export const TestQueryDocument = \`
+    query testQuery {
+  feed {
+    id
+    commentCount
+    repository {
+      full_name
+      html_url
+      owner {
+        avatar_url
+      }
+    }
+  }
+}
+    \`;",
+  "prepend": [
+    "import { baseApi } from '@/library/graphql/baseApi';",
+    "import {gql, useSubscription, SubscriptionHookOptions} from '@apollo/client';",
+  ],
+}
+`;

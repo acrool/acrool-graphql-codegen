@@ -36,8 +36,8 @@
     "graphql": "^16.6.0"
   },
   "devDependencies": {
-    "@graphql-codegen/plugin-helpers": "^4.2.0",
-    "@graphql-codegen/visitor-plugin-common": "3.1.1",
+    "@graphql-codegen/plugin-helpers": "^3.0.0",
+    "@graphql-codegen/visitor-plugin-common": "2.13.1",
     "@graphql-tools/apollo-engine-loader": "^7.3.26",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.15.11",
