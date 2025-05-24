@@ -158,6 +158,27 @@ export interface RTKConfig {
    * ```
    */
   apiName?: string;
+
+  /**
+   * @name noExportDocument
+   * @description 產生的 Document 變數不要加 export，預設為 false。
+   * @default false
+   *
+   * @exampleMarkdown
+   * ```ts filename="codegen.ts"
+   *  const config = {
+   *    generates: {
+   *      'src/apis/userApi.ts': {
+   *        plugins: ['typescript-rtk-query'],
+   *        config: {
+   *          noExportDocument: true,
+   *        },
+   *      },
+   *    },
+   *  };
+   * ```
+   */
+  noExportDocument?: boolean;
 }
 
 export interface RTKQueryRawPluginConfig extends RawClientSideBasePluginConfig, RTKConfig {}

@@ -1,6 +1,6 @@
 {
   "name": "@acrool/graphql-codegen-rtk-query",
-  "version": "1.0.4-alpha.0",
+  "version": "1.0.4-alpha.1",
   "description": "trk-query for graphql-code-generator",
   "keywords": [
     "typescript",
