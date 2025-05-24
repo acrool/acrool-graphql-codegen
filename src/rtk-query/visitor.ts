@@ -225,6 +225,6 @@ ${this.config.exportApi ? `export { injectedRtkApi as ${this.config.apiName || '
         const documentVar = `${pascalCase(operationName)}Document`;
         const queryString = `\`
 ${print(node)}\``;
-        return `${this.config.exportDocument ? '' : 'export '}const ${documentVar} = ${queryString};`;
+        return `${this.config.exportDocument ? 'export' : ' '}const ${documentVar} = ${queryString};`;
     }
 }
