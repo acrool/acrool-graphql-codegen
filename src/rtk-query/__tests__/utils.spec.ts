@@ -58,7 +58,7 @@ describe('My Plugin', () => {
             importBaseApiAlternateName: 'baseApi',
             exportHooks: true,
             exportApi: true,
-            noExportDocument: false,
+            exportDocument: true,
         });
 
         const usedAfter = process.memoryUsage().heapUsed;

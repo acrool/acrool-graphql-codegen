@@ -171,14 +171,14 @@ export interface RTKConfig {
    *      'src/apis/userApi.ts': {
    *        plugins: ['typescript-rtk-query'],
    *        config: {
-   *          noExportDocument: true,
+   *          exportDocument: true,
    *        },
    *      },
    *    },
    *  };
    * ```
    */
-  noExportDocument?: boolean;
+  exportDocument?: boolean;
 }
 
 export interface RTKQueryRawPluginConfig extends RawClientSideBasePluginConfig, RTKConfig {}

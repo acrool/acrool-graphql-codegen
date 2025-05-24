@@ -3,8 +3,8 @@
 exports[`My Plugin Should greet 1`] = `
 {
   "content": "
-export const TestQueryDocument = \`
-    query testQuery {
+const TestQueryDocument = \`
+query testQuery {
   feed {
     id
     commentCount
@@ -16,11 +16,8 @@ export const TestQueryDocument = \`
       }
     }
   }
-}
-    \`;",
-  "prepend": [
-    "import { baseApi } from '@/library/graphql/baseApi';",
-    "import {gql, useSubscription, SubscriptionHookOptions} from '@apollo/client';",
-  ],
+}\`;
+",
+  "prepend": [],
 }
 `;

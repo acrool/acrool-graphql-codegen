@@ -1,6 +1,6 @@
 import autoBind from 'auto-bind';
 import {pascalCase} from 'change-case-all';
-import {GraphQLSchema, OperationDefinitionNode} from 'graphql';
+import {GraphQLSchema, OperationDefinitionNode, print} from 'graphql';
 import {Types} from '@graphql-codegen/plugin-helpers';
 import {
     ClientSideBaseVisitor,
@@ -33,6 +33,7 @@ export class RTKQueryVisitor extends ClientSideBaseVisitor<
             addTransformResponse: getConfigValue(rawConfig.addTransformResponse, false),
             exportHooks: getConfigValue(rawConfig.exportHooks, false),
             exportApi: getConfigValue(rawConfig.exportApi, false),
+            exportDocument: getConfigValue(rawConfig.exportDocument, false),
             overrideExisting: getConfigValue(rawConfig.overrideExisting, ''),
         });
         this._externalImportPrefix = this.config.importOperationTypesFrom
@@ -213,5 +214,41 @@ ${this.config.exportApi ? `export { injectedRtkApi as ${this.config.apiName || '
         }
 
         return '';
+    }
+
+    public OperationDefinition(node: OperationDefinitionNode) {
+        console.log('asasdasdasda');
+        const operationName = node.name?.value;
+        if (!operationName) return null;
+
+        // 產生變數名稱
+        const documentVar = `${pascalCase(operationName)}Document`;
+        // 用 print 產生 query string
+        const queryString = `\`
+${print(node)}\``;
+        // 產生內容
+        const code = `${this.config.exportDocument ? '' : 'export '}const ${documentVar} = ${queryString};`;
+
+        // 產生 endpoint/hook 等內容
+        const documentVariableName = documentVar;
+        // 修正 operationType 型別
+        const operationType = (node.operation.charAt(0).toUpperCase() + node.operation.slice(1)) as 'Query' | 'Mutation' | 'Subscription';
+        const operationTypeSuffix = this.getOperationSuffix(node, operationType);
+        const operationResultType = this.convertName(node, {
+            suffix: operationTypeSuffix + this._parsedConfig.operationResultSuffix,
+        });
+        const operationVariablesTypes = this.convertName(node, {
+            suffix: operationTypeSuffix + 'Variables',
+        });
+        const hasRequiredVariables = this.checkVariablesRequirements(node);
+        const additional = this.buildOperation(
+            node,
+            documentVariableName,
+            operationType,
+            operationResultType,
+            operationVariablesTypes,
+            hasRequiredVariables
+        );
+        return [code, additional].filter(Boolean).join('\n');
     }
 }
