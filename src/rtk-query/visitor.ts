@@ -214,11 +214,4 @@ ${this.config.exportApi ? `export { injectedRtkApi as ${this.config.apiName || '
 
         return '';
     }
-
-    getDocumentNodeVariable(documentName: string, documentNode: string): string {
-        if (this.config.noExportDocument) {
-            return `const ${documentName} = ${documentNode};`;
-        }
-        return `export const ${documentName} = ${documentNode};`;
-    }
 }
